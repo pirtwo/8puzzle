@@ -10,7 +10,9 @@ export default function astar({
     openList.push(node);
 
     while (openList.length > 0) {
-        let currNode = openList.sort((a, b) => b.cost - a.cost).pop();
+        let currNode =
+            openList.reduce((pre, cur) => pre = cur.cost < pre.cost ? cur : pre);
+        openList.splice(openList.indexOf(currNode), 1);
         closeList.push(currNode);
 
         if (goalTestFn(currNode)) {
@@ -24,16 +26,14 @@ export default function astar({
         }
 
         let successors = currNode.getSuccessors();
-        successors.forEach(child => {
-            if (closeList.indexOf(n => n.fingerprint == child.fingerprint) == -1) {
+        for (let i = 0; i < successors.length; i++) {
+            let child = successors[i];
+            if (closeList.indexOf(n => n.state == child.state) == -1) {
                 child.cost = calcCostFn(child);
                 openList.push(child);
-            }
-        });
+            }            
+        }
     }
-
-
-
     // no answer at this point
     return null;
 }
