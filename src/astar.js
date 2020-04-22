@@ -13,6 +13,10 @@ export default function astar({
         let currNode =
             openList.reduce((pre, cur) => pre = cur.cost < pre.cost ? cur : pre);
         openList.splice(openList.indexOf(currNode), 1);
+
+        if(closeList.find(n => n.state == currNode.state) !== undefined)
+            continue;
+
         closeList.push(currNode);
 
         if (goalTestFn(currNode)) {
@@ -28,10 +32,8 @@ export default function astar({
         let successors = currNode.getSuccessors();
         for (let i = 0; i < successors.length; i++) {
             let child = successors[i];
-            if (closeList.indexOf(n => n.state == child.state) == -1) {
-                child.cost = calcCostFn(child);
-                openList.push(child);
-            }            
+            child.cost = calcCostFn(child);
+            openList.push(child);
         }
     }
     // no answer at this point
