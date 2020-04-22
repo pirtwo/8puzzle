@@ -1,17 +1,16 @@
+import * as utils from './utils';
+
 export default function calcManhattanDistance(node) {
     let totalDist = 0;
-    node.state.filter(t => !t.isEmpty).forEach(tile => {
-        let origin = getOrigin(tile);
-        totalDist += Math.abs(tile.row - origin.row) + Math.abs(tile.col - origin.col);
-    });
-    return totalDist;
-}
+    let curPos, origin,
+        tile, tiles = node.state.split('').filter(tile => +tile !== 9);
 
-function getOrigin(tile) {
-    let row = Math.floor((tile.number - 1) / tile.totalRows);
-    let col = tile.number - row * tile.totalCols - 1;
-    return {
-        row,
-        col
+    for (let i = 0; i < tiles.length; i++) {
+        tile = tiles[i];
+        curPos = utils.indexToCoordinate(node.state.indexOf(tile));
+        origin = utils.indexToCoordinate(tile - 1);
+        totalDist += Math.abs(curPos.row - origin.row) + Math.abs(curPos.col - origin.col);
     }
+    
+    return totalDist;
 }

@@ -159,16 +159,11 @@ export default class BoardManager {
     }
 
     solve() {
-        let currState = this.tiles.map(t => {
-            return {
-                row: t.row,
-                col: t.col,
-                number: t.number,
-                isEmpty: t.isEmpty,
-                totalRows: this.rows,
-                totalCols: this.cols,
-            }
+        let currState = new Array(this.tiles.length);
+        this.tiles.forEach(t => {
+            currState[t.row * this.cols + t.col] = t.number;
         });
+        currState = currState.reduce((pre, cur) => `${pre}${cur}`);
 
         let node = new Node({
             state: currState,
@@ -180,7 +175,7 @@ export default class BoardManager {
             node: node,
             goalTestFn: goalFunc,
             calcCostFn: costFunc
-        });        
+        });
 
         while (solution && solution.operation) {
             this.exectionQueue.push(solution.operation);

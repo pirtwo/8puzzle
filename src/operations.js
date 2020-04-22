@@ -66,3 +66,5 @@ function getVelocity(speed) {
 }
 
 export default OPERATIONS;
+
+// TODO: change name of fn function to apply
