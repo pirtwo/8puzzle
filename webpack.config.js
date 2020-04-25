@@ -1,11 +1,15 @@
 const path = require('path');
 
 module.exports = {
-  entry: './src/index.js',
+  mode: 'development',
   devtool: '#eval-source-map',
+  entry: {
+    bundle: './src/index.js',
+    worker: './src/worker.js'
+  },  
   output: {
-    path: path.resolve(__dirname, 'build/js'),
-    filename: 'app.js'
+    globalObject: 'this',
+    path: path.resolve(__dirname, 'build/js')
   },
   devServer: {
     hot: true,

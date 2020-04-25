@@ -1,7 +1,3 @@
-import Node from './tree-node';
-import astarSearch from './astar';
-import goalFunc from './goal';
-import costFunc from './cost';
 import ACTIONS from './operations';
 
 export default class BoardManager {
@@ -22,9 +18,17 @@ export default class BoardManager {
         this.tileWidth = tileWidth;
         this.tileMargin = tileMargin;
         this.tileSpeed = tileSpeed;
-
         this.emptyTile = undefined;
         this.exectionQueue = [];
+
+        this.worker = new Worker('./js/worker.js');
+        this.worker.onmessage = (msg) => {
+            if (msg.data instanceof Array) {
+                for (const action of msg.data) {
+                    this.exectionQueue.push(ACTIONS[action]);
+                }
+            }
+        }
     }
 
     getWidth() {
@@ -49,6 +53,10 @@ export default class BoardManager {
 
     getCurrentMove() {
         return this.exectionQueue[0];
+    }
+
+    getWorker() {
+        return this.worker;
     }
 
     setBoard(board) {
@@ -162,27 +170,11 @@ export default class BoardManager {
         let currState = new Array(this.tiles.length);
         this.tiles.forEach(t => {
             currState[t.row * this.cols + t.col] = t.number;
-        });
-        currState = currState.reduce((pre, cur) => `${pre}${cur}`);
-
-        let node = new Node({
-            state: currState,
-            parent: null,
-            operation: null
-        });
-
-        let solution = astarSearch({
-            node: node,
-            goalTestFn: goalFunc,
-            calcCostFn: costFunc
-        });
-
-        while (solution && solution.operation) {
-            this.exectionQueue.push(solution.operation);
-            solution = solution.parent;
-        }
-
-        this.exectionQueue.reverse();
+        });       
+        this.worker.postMessage({
+            start: true,
+            state: currState.reduce((pre, cur) => `${pre}${cur}`)
+        });        
     }
 
     reset() {
