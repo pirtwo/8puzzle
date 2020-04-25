@@ -1,3 +1,10 @@
+import {
+    Point,
+    Text,
+    TextStyle,
+    Container,
+    Graphics,
+} from 'pixi.js';
 import ACTIONS from './operations';
 
 export default class BoardManager {
@@ -9,16 +16,20 @@ export default class BoardManager {
         tileMargin = 5,
         tileSpeed = 10
     }) {
+        this._srcTile;
+        this._desTile;
+        this._srcPin;
+        this._desPin;
+        this._currMove;
         this.rows = rows;
         this.cols = cols;
         this.tiles = [];
-        this.pinPoints = [];
+        this.pins = [];
         this.board = undefined;
         this.cellWidth = cellWidth;
         this.tileWidth = tileWidth;
         this.tileMargin = tileMargin;
         this.tileSpeed = tileSpeed;
-        this.emptyTile = undefined;
         this.exectionQueue = [];
 
         this.worker = new Worker('./js/worker.js');
@@ -27,6 +38,7 @@ export default class BoardManager {
                 for (const action of msg.data) {
                     this.exectionQueue.push(ACTIONS[action]);
                 }
+                this.execute();
             }
         }
     }
@@ -44,44 +56,15 @@ export default class BoardManager {
     }
 
     getEmptyTile() {
-        return this.emptyTile;
+        return this.tiles.find(t => t.isEmpty);
     }
 
     getPin(row, col) {
-        return this.pinPoints.find(p => p.row == row && p.col == col).pin;
-    }
-
-    getCurrentMove() {
-        return this.exectionQueue[0];
-    }
-
-    getWorker() {
-        return this.worker;
-    }
-
-    setBoard(board) {
-        this.board = board;
-        return this;
-    }
-
-    setTiles(tiles) {
-        this.tiles = tiles;
-        if (this.board) this.board.addChild(...tiles);
-        return this;
-    }
-
-    setEmptyTile(tile) {
-        this.emptyTile = tile;
-        return this;
+        return this.pins.find(p => p.row == row && p.col == col).pin;
     }
 
     setBoardPosition(x, y) {
         this.board.position.set(x, y);
-        return this;
-    }
-
-    setPinPoints(pinPoints) {
-        this.pinPoints = pinPoints;
         return this;
     }
 
@@ -144,11 +127,6 @@ export default class BoardManager {
         return this;
     }
 
-    removeCurrentMove() {
-        this.exectionQueue.shift();
-        return this;
-    }
-
     /**
      * swaps row and col number of tileA with tileB.
      * 
@@ -162,6 +140,101 @@ export default class BoardManager {
         return this;
     }
 
+    createBoard() {
+        let ctx = new Graphics();
+        this.board = new Container();
+
+        // draw board body
+        ctx.lineStyle(2, 0xc219a6);
+        ctx.drawRect(0, 0, this.getWidth(), this.getHeight());
+
+        // draw grid
+        for (let i = 1; i < this.rows; i++) {
+            ctx.moveTo(0, i * this.getCellWidth());
+            ctx.lineTo(this.getWidth(), i * this.getCellWidth());
+        }
+
+        for (let j = 1; j < this.cols; j++) {
+            ctx.moveTo(j * this.getCellWidth(), 0);
+            ctx.lineTo(j * this.getCellWidth(), this.getHeight());
+        }
+
+        this.board.addChild(ctx);
+
+        return this;
+    }
+
+    createTiles(emptyTile, clickCallback) {
+        this.tiles = [];
+
+        let ctx,
+            tile,
+            tileNum = 1,
+            tileText;
+
+        let textStyle = new TextStyle({
+            fontFamily: 'Arial',
+            fontSize: 10,
+            fontStyle: 'normal',
+            fontWeight: 'bold',
+        });
+
+        for (let row = 0; row < this.rows; row++) {
+            for (let col = 0; col < this.cols; col++) {
+                // set tile properties
+                tile = new Container();
+                tile.row = row;
+                tile.col = col;
+                tile.vx = 0;
+                tile.vy = 0;
+                tile.number = tileNum;
+                tile.isEmpty = tileNum == emptyTile;
+                tile.interactive = true;
+                tile.on("pointerdown", clickCallback);
+
+                // add tile shape
+                ctx = new Graphics();
+                ctx.beginFill(0x0fdb91, tile.isEmpty ? 0.5 : 1);
+                tile.addChild(ctx.drawRect(0, 0, this.tileWidth, this.tileWidth));
+                ctx.endFill();
+
+                // add tile text
+                tileText = new Text(`Tile: ${tile.isEmpty ? 'EMPTY' : tileNum}`, textStyle);
+                tileText.anchor.set(0.5);
+                tileText.position.set(this.tileWidth / 2, this.tileWidth / 2);
+                tile.addChild(tileText);
+
+                tile.position.set(
+                    col * this.getCellWidth() + this.tileMargin,
+                    row * this.getCellWidth() + this.tileMargin,
+                )
+
+                tileNum++;
+                this.tiles.push(tile);
+                this.board.addChild(tile);
+            }
+        }
+        return this;
+    }
+
+    createPins() {
+        this.pins = [];
+        for (let row = 0; row < this.rows; row++) {
+            for (let col = 0; col < this.cols; col++) {
+                this.pins.push({
+                    row,
+                    col,
+                    pin: new Point(
+                        col * this.getCellWidth() + this.tileMargin,
+                        row * this.getCellWidth() + this.tileMargin
+                    )
+                });
+            }
+        }
+
+        return this;
+    }
+
     shuffle() {
         // TODO: write a shuffle function to mix the tiles.
     }
@@ -170,14 +243,60 @@ export default class BoardManager {
         let currState = new Array(this.tiles.length);
         this.tiles.forEach(t => {
             currState[t.row * this.cols + t.col] = t.number;
-        });       
+        });
         this.worker.postMessage({
             start: true,
             state: currState.reduce((pre, cur) => `${pre}${cur}`)
-        });        
+        });
     }
 
     reset() {
         // TODO: write a reset function to reset the tiles position.
+    }
+
+    execute() {
+        if (this.exectionQueue.length > 0) {
+            this._currMove = this.exectionQueue.shift();
+
+            this._srcTile = this.getEmptyTile();
+            this._desTile = this.tiles.find(t =>
+                t.row == this._currMove.fn(this._srcTile.row, this._srcTile.col).row &&
+                t.col == this._currMove.fn(this._srcTile.row, this._srcTile.col).col
+            );
+
+            this._srcPin = this.getPin(this._desTile.row, this._desTile.col);
+            this._desPin = this.getPin(this._srcTile.row, this._srcTile.col);
+        } else this._currMove = null;
+        return this;
+    }
+
+    update(delta) {
+        if (this._currMove) {
+            this._srcTile.position.x +=
+                this._currMove.getVelocity(this.tileSpeed).vx * delta;
+            this._srcTile.position.y +=
+                this._currMove.getVelocity(this.tileSpeed).vy * delta;
+            this._desTile.position.x +=
+                -this._currMove.getVelocity(this.tileSpeed).vx * delta;
+            this._desTile.position.y +=
+                -this._currMove.getVelocity(this.tileSpeed).vy * delta;
+
+            if (
+                (this._currMove.name == 'slideLeft' &&
+                    this._srcTile.x <= this._srcPin.x) ||
+                (this._currMove.name == 'slideRight' &&
+                    this._srcTile.x >= this._srcPin.x) ||
+                (this._currMove.name == 'slideUp' &&
+                    this._srcTile.y <= this._srcPin.y) ||
+                (this._currMove.name == 'slideDown' &&
+                    this._srcTile.y >= this._srcPin.y)
+            ) {
+                this._srcTile.vx = this._srcTile.vy = 0;
+                this._desTile.vx = this._desTile.vy = 0;
+                this._srcTile.position = this._srcPin;
+                this._desTile.position = this._desPin;
+                this.swapTiles(this._srcTile, this._desTile).execute();
+            }
+        }
     }
 }
