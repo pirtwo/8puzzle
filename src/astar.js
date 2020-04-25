@@ -20,7 +20,6 @@ export default function astar({
         closeList.push(currNode);
 
         if (goalTestFn(currNode)) {
-            console.log(currNode);
             console.log(`
             ------- A* stats -------
             depth: ${currNode.getDepth()}
