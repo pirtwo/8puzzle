@@ -14,7 +14,8 @@ export default class BoardManager {
         cellWidth,
         tileWidth,
         tileMargin = 5,
-        tileSpeed = 10
+        tileSpeed = 10,
+        solveCallback
     }) {
         this._srcTile;
         this._desTile;
@@ -31,6 +32,7 @@ export default class BoardManager {
         this.tileMargin = tileMargin;
         this.tileSpeed = tileSpeed;
         this.exectionQueue = [];
+        this.solveCallback = solveCallback;
 
         this.worker = new Worker('./js/worker.js');
         this.worker.onmessage = (msg) => {
@@ -39,6 +41,7 @@ export default class BoardManager {
                     this.exectionQueue.push(ACTIONS[action]);
                 }
                 this.execute();
+                solveCallback();
             }
         }
     }
@@ -174,7 +177,7 @@ export default class BoardManager {
 
         let textStyle = new TextStyle({
             fontFamily: 'Arial',
-            fontSize: 10,
+            fontSize: this.getWidth() / 30,
             fontStyle: 'normal',
             fontWeight: 'bold',
         });
@@ -194,7 +197,7 @@ export default class BoardManager {
 
                 // add tile shape
                 ctx = new Graphics();
-                ctx.beginFill(0x0fdb91, tile.isEmpty ? 0.5 : 1);
+                ctx.beginFill(0x37b6f6, tile.isEmpty ? 0.5 : 1);
                 tile.addChild(ctx.drawRect(0, 0, this.tileWidth, this.tileWidth));
                 ctx.endFill();
 
