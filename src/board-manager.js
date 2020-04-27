@@ -13,9 +13,11 @@ export default class BoardManager {
         cols = 3,
         cellWidth,
         tileWidth,
+        emptyTile,
         tileMargin = 5,
         tileSpeed = 10,
-        solveCallback
+        solveCallback,
+        tileClickCallback
     }) {
         this._srcTile;
         this._desTile;
@@ -33,6 +35,8 @@ export default class BoardManager {
         this.tileSpeed = tileSpeed;
         this.exectionQueue = [];
         this.solveCallback = solveCallback;
+        this.tileClickCallback = tileClickCallback;
+        this.emptyTileNumber = emptyTile;
 
         this.worker = new Worker('./js/worker.js');
         this.worker.onmessage = (msg) => {
@@ -167,7 +171,7 @@ export default class BoardManager {
         return this;
     }
 
-    createTiles(emptyTile, clickCallback) {
+    createTiles() {
         this.tiles = [];
 
         let ctx,
@@ -191,9 +195,9 @@ export default class BoardManager {
                 tile.vx = 0;
                 tile.vy = 0;
                 tile.number = tileNum;
-                tile.isEmpty = tileNum == emptyTile;
+                tile.isEmpty = tileNum == this.emptyTileNumber;
                 tile.interactive = true;
-                tile.on("pointerdown", clickCallback);
+                tile.on("pointerdown", this.tileClickCallback);
 
                 // add tile shape
                 ctx = new Graphics();
@@ -254,7 +258,8 @@ export default class BoardManager {
     }
 
     reset() {
-        // TODO: write a reset function to reset the tiles position.
+        this.tiles = [];
+        this.createTiles();
     }
 
     execute() {

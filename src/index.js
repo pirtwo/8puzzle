@@ -109,11 +109,13 @@ function setup(loader, resources) {
         tileWidth: Math.floor(body.width / 4),
         tileMargin: 1,
         tileSpeed: 15,
+        emptyTile: 9,
+        tileClickCallback: onTileClicked,
         solveCallback: onPuzzleSolved
     });
 
     bm.createBoard()
-        .createTiles(9, onTileClicked)
+        .createTiles()
         .createPins()
         .setBoardPosition(
             body.width / 2 - bm.getWidth() / 2,
@@ -185,6 +187,8 @@ function onSolveClicked(e) {
 
 function onShuffleClicked(e) {
     console.log('shuffle clicked!!!')
+    bm.reset();
+    app.renderer.clear();
 }
 
 function onSettingClicked(e) {
