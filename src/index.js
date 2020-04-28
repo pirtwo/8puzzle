@@ -188,7 +188,7 @@ function onSolveClicked(e) {
 function onShuffleClicked(e) {
     console.log('shuffle clicked!!!')
     bm.reset();
-    app.renderer.clear();
+    bm.shuffle();
 }
 
 function onSettingClicked(e) {
