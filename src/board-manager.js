@@ -5,6 +5,8 @@ import {
     Container,
     Graphics,
 } from 'pixi.js';
+import * as utils from './utils';
+import * as math from '../lib/math';
 import ACTIONS from './operations';
 
 export default class BoardManager {
@@ -172,8 +174,6 @@ export default class BoardManager {
     }
 
     createTiles() {
-        this.tiles = [];
-
         let ctx,
             tile,
             tileNum = 1,
@@ -243,7 +243,47 @@ export default class BoardManager {
     }
 
     shuffle() {
-        // TODO: write a shuffle function to mix the tiles.
+        let inversion = 20; // must be even number
+        let arr = new Array(this.rows * this.cols)
+            .fill(0)
+            .map((v, i) => i + 1);
+        let free = new Array(this.rows * this.cols)
+            .fill(0)
+            .map((v, i) => i);
+        let blocked = [];
+
+        for (let i = 0; i < inversion; i++) {
+            free = free.sort((a, b) => a - b);
+            let idx = free[math.randInt(0, free.length - 3)];
+            free.splice(free.indexOf(idx), 1);
+            blocked.push(idx);
+            [arr[idx], arr[idx + 1]] = [arr[idx + 1], arr[idx]];
+
+            for (const blockedIdx of blocked) {
+                if (arr[blockedIdx] < arr[blockedIdx + 1]) {
+                    free.push(blockedIdx);
+                    blocked.splice(blocked.indexOf(blockedIdx), 1);
+                }
+            }
+        }
+
+        for (let i = 0; i < arr.length; i++) {
+            let number = arr[i];
+            let cord = utils.indexToCoordinate(i);
+            let tile = this.tiles.find(t => t.number == number);
+            tile.row = cord.row;
+            tile.col = cord.col;
+            tile.position = this.getPin(cord.row, cord.col);            
+        }
+
+        console.log(arr);
+        console.log(this.tiles.map(t => {
+            return {
+                row: t.row,
+                col: t.col,
+                num: t.number
+            }
+        }));
     }
 
     solve() {
@@ -258,8 +298,19 @@ export default class BoardManager {
     }
 
     reset() {
-        this.tiles = [];
-        this.createTiles();
+        let index, tile;
+        for (let i = 0; i < this.rows; i++) {
+            for (let j = 0; j < this.cols; j++) {
+                index = utils.coordinateToIndex({
+                    row: i,
+                    col: j
+                });
+                tile = this.tiles.find(t => t.number - 1 == index);
+                tile.row = i;
+                tile.col = j;
+                tile.position = this.getPin(i, j);
+            }
+        }
     }
 
     execute() {
