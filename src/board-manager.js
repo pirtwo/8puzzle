@@ -4,6 +4,9 @@ import {
     TextStyle,
     Container,
     Graphics,
+    Sprite,
+    Rectangle,
+    Texture
 } from 'pixi.js';
 import * as utils from './utils';
 import * as math from '../lib/math';
@@ -30,7 +33,9 @@ export default class BoardManager {
         this.cols = cols;
         this.tiles = [];
         this.pins = [];
-        this.board = undefined;
+        this.texture = undefined;
+        this.board = new Container();
+        this.background = new Sprite();
         this.cellWidth = cellWidth;
         this.tileWidth = tileWidth;
         this.tileMargin = tileMargin;
@@ -39,6 +44,8 @@ export default class BoardManager {
         this.solveCallback = solveCallback;
         this.tileClickCallback = tileClickCallback;
         this.emptyTileNumber = emptyTile;
+
+        this.board.addChild(this.background);
 
         this.worker = new Worker('./js/worker.js');
         this.worker.onmessage = (msg) => {
@@ -70,6 +77,18 @@ export default class BoardManager {
 
     getPin(row, col) {
         return this.pins.find(p => p.row == row && p.col == col).pin;
+    }
+
+    setBackground(texture) {
+        this.background.texture = texture;
+        this.background.tint = 0x5c5c5c;
+        this.background.width = this.background.height = this.getWidth();
+        return this;
+    }
+
+    setPuzzleTexture(texture) {
+        this.texture = texture;
+        return this;
     }
 
     setBoardPosition(x, y) {
@@ -151,22 +170,21 @@ export default class BoardManager {
 
     createBoard() {
         let ctx = new Graphics();
-        this.board = new Container();
 
         // draw board body
-        ctx.lineStyle(2, 0xc219a6);
+        ctx.lineStyle(1, 0x000000, 0.1);
         ctx.drawRect(0, 0, this.getWidth(), this.getHeight());
 
         // draw grid
-        for (let i = 1; i < this.rows; i++) {
-            ctx.moveTo(0, i * this.getCellWidth());
-            ctx.lineTo(this.getWidth(), i * this.getCellWidth());
-        }
+        // for (let i = 1; i < this.rows; i++) {
+        //     ctx.moveTo(0, i * this.getCellWidth());
+        //     ctx.lineTo(this.getWidth(), i * this.getCellWidth());
+        // }
 
-        for (let j = 1; j < this.cols; j++) {
-            ctx.moveTo(j * this.getCellWidth(), 0);
-            ctx.lineTo(j * this.getCellWidth(), this.getHeight());
-        }
+        // for (let j = 1; j < this.cols; j++) {
+        //     ctx.moveTo(j * this.getCellWidth(), 0);
+        //     ctx.lineTo(j * this.getCellWidth(), this.getHeight());
+        // }
 
         this.board.addChild(ctx);
 
@@ -186,6 +204,8 @@ export default class BoardManager {
             fontWeight: 'bold',
         });
 
+        let frameWidth = Math.floor(this.texture.width / this.cols)
+
         for (let row = 0; row < this.rows; row++) {
             for (let col = 0; col < this.cols; col++) {
                 // set tile properties
@@ -199,11 +219,21 @@ export default class BoardManager {
                 tile.interactive = true;
                 tile.on("pointerdown", this.tileClickCallback);
 
-                // add tile shape
-                ctx = new Graphics();
-                ctx.beginFill(0x37b6f6, tile.isEmpty ? 0.5 : 1);
-                tile.addChild(ctx.drawRect(0, 0, this.tileWidth, this.tileWidth));
-                ctx.endFill();
+                if (tile.isEmpty) {
+                    ctx = new Graphics();
+                    ctx.beginFill(0x37b6f6, 0);
+                    tile.addChild(ctx.drawRect(0, 0, this.tileWidth, this.tileWidth));
+                    ctx.endFill();
+                } else {
+                    let frame = new Rectangle(
+                        col * frameWidth,
+                        row * frameWidth,
+                        frameWidth,
+                        frameWidth);
+                    let sp = new Sprite(new Texture(this.texture, frame));
+                    sp.width = sp.height = this.tileWidth;
+                    tile.addChild(sp);
+                }
 
                 // add tile text
                 tileText = new Text(`Tile: ${tile.isEmpty ? 'EMPTY' : tileNum}`, textStyle);
@@ -242,6 +272,14 @@ export default class BoardManager {
         return this;
     }
 
+    setTilesNumberVisiblity(isVisible) {
+        for (const tile of this.tiles) {
+            tile.children[1].visible = isVisible;
+        }
+
+        return this;
+    }    
+
     shuffle() {
         let inversion = 20; // must be even number
         let arr = new Array(this.rows * this.cols)
@@ -273,7 +311,7 @@ export default class BoardManager {
             let tile = this.tiles.find(t => t.number == number);
             tile.row = cord.row;
             tile.col = cord.col;
-            tile.position = this.getPin(cord.row, cord.col);            
+            tile.position = this.getPin(cord.row, cord.col);
         }
 
         console.log(arr);
