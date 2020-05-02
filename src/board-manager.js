@@ -202,6 +202,7 @@ export default class BoardManager {
             fontSize: this.getWidth() / 30,
             fontStyle: 'normal',
             fontWeight: 'bold',
+            fill: 0x000000
         });
 
         let frameWidth = Math.floor(this.texture.width / this.cols)
@@ -236,9 +237,15 @@ export default class BoardManager {
                 }
 
                 // add tile text
-                tileText = new Text(`Tile: ${tile.isEmpty ? 'EMPTY' : tileNum}`, textStyle);
-                tileText.anchor.set(0.5);
-                tileText.position.set(this.tileWidth / 2, this.tileWidth / 2);
+                ctx = new Graphics();
+                let tileText = new Container();
+                tileText.visible = !tile.isEmpty;
+                let text = new Text(`${tileNum}`, textStyle);
+                ctx.beginFill(0xffffff, 0.9);
+                let textBg = ctx.drawRect(0, 0, 50, 50);
+                text.anchor.set(0.5);
+                text.position.set(textBg.width / 2, textBg.height / 2);
+                tileText.addChild(textBg, text);
                 tile.addChild(tileText);
 
                 tile.position.set(
@@ -272,13 +279,21 @@ export default class BoardManager {
         return this;
     }
 
-    setTilesNumberVisiblity(isVisible) {
+    setTilesVisiblity(isVisible) {
         for (const tile of this.tiles) {
+            tile.visible = isVisible;
+        }
+
+        return this;
+    }
+
+    setTilesNumberVisiblity(isVisible) {
+        for (const tile of this.tiles.filter(t => !t.isEmpty)) {
             tile.children[1].visible = isVisible;
         }
 
         return this;
-    }    
+    }
 
     shuffle() {
         let inversion = 20; // must be even number
