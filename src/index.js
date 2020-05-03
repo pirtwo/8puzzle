@@ -3,6 +3,7 @@ import Sound from "pixi-sound";
 import Button from './scenes/button';
 import BoardManager from "./board-manager";
 import LoadingScene from './scenes/loading';
+import SettingScene from './scenes/settings';
 
 const app = new PIXI.Application({
     autoStart: false,
@@ -33,7 +34,7 @@ let bm,
 let tileset;
 
 // scenes
-let loadingScene;
+let settingScene, loadingScene;
 
 // sounds
 let clickSound;
@@ -133,6 +134,13 @@ function setup(loader, resources) {
     });
     loadingScene.hide();
 
+    settingScene = new SettingScene({
+        width: app.screen.width,
+        height: app.screen.height,
+        boardManager: bm
+    });
+    settingScene.hide();
+
     shuffleButton = new Button({
         text: 'Shuffle',
         width: 100,
@@ -175,7 +183,7 @@ function setup(loader, resources) {
     tools.addChild(shuffleButton, solveButton, settingButton);
     tools.position.set(head.w - tools.width - 20, 20);
 
-    app.stage.addChild(head, body, loadingScene);
+    app.stage.addChild(head, body, settingScene, loadingScene);
     app.start();
 }
 
@@ -198,6 +206,7 @@ function onShuffleClicked(e) {
 
 function onSettingClicked(e) {
     console.log('setting clicked!!!')
+    settingScene.show();
 }
 
 function onTileClicked(e) {
@@ -226,3 +235,5 @@ function registerServiceWorker() {
 app.ticker.add((delta) => {
     update(delta)
 });
+
+export default app;
