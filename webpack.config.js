@@ -5,7 +5,8 @@ module.exports = {
   devtool: '#eval-source-map',
   entry: {
     bundle: './src/index.js',
-    worker: './src/worker.js'
+    puzzle_worker: './src/puzzle-worker.js',
+    service_worker: './src/service-worker.js'
   },  
   output: {
     globalObject: 'this',
@@ -13,6 +14,7 @@ module.exports = {
   },
   devServer: {
     hot: true,
+    https: true,
     publicPath: '/js/',
     contentBase: path.join(__dirname, 'public'),
     watchContentBase: true,
