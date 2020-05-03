@@ -27,9 +27,7 @@ let bm,
     head,
     body,
     title,
-    tools,
-    timeElapsed = 0,
-    lastFPSCheck = 0;
+    tools;
 
 // tileset
 let tileset;
@@ -48,12 +46,15 @@ document.body.appendChild(app.view);
 app.loader
     .add('click', './assets/sounds/click1.ogg')
     .add('tileset', './assets/sprites/tileset.json')
+    .add('bg-01', './assets/images/view-01.jpg')
     .load(setup);
 
 function setup(loader, resources) {
     app.stop();
     tileset = resources['tileset'].textures;
     clickSound = resources.click.sound;
+
+    let img = resources['bg-01'].texture;
 
     // -- sections --
     title = new Container();
@@ -115,6 +116,8 @@ function setup(loader, resources) {
     });
 
     bm.createBoard()
+        .setBackground(img)
+        .setPuzzleTexture(img)
         .createTiles()
         .createPins()
         .setBoardPosition(
@@ -126,7 +129,7 @@ function setup(loader, resources) {
         width: app.screen.width,
         height: app.screen.height
     });
-    loadingScene.hide();    
+    loadingScene.hide();
 
     shuffleButton = new Button({
         text: 'Shuffle',
