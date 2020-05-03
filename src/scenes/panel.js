@@ -29,8 +29,6 @@ export default class Panel extends Scene {
         this.body.addChild(this.background);
         this.body.position.set(width / 2, height / 2);
 
-        this.addChild(this.body);
-
         if (hasBackdrop) {
             ctx = new Graphics();
             ctx.beginFill(0xffffff, 0.5);
@@ -38,6 +36,8 @@ export default class Panel extends Scene {
             this.backdrop.interactive = true;
             this.addChild(this.backdrop);
         }
+        
+        this.addChild(this.body);
     }
 
     putCenter(centerX, centerY) {
