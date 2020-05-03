@@ -56,6 +56,8 @@ function setup(loader, resources) {
 
     let img = resources['bg-01'].texture;
 
+    registerServiceWorker();
+
     // -- sections --
     title = new Container();
     head = new Container();
@@ -209,6 +211,16 @@ function onTileClicked(e) {
 
 function onPuzzleSolved() {
     loadingScene.hide();
+}
+
+function registerServiceWorker() {
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker
+            .register('./js/service_worker.js')
+            .then(function () {
+                console.log('Service Worker Registered');
+            });
+    }
 }
 
 app.ticker.add((delta) => {
