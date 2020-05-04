@@ -47,7 +47,7 @@ export default class BoardManager {
 
         this.board.addChild(this.background);
 
-        this.worker = new Worker('./js/puzzle_worker.js');
+        this.worker = new Worker('./js/puzzle-worker.js');
         this.worker.onmessage = (msg) => {
             if (msg.data instanceof Array) {
                 for (const action of msg.data) {
