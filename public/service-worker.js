@@ -1,12 +1,12 @@
 self.addEventListener('install', function (e) {
     e.waitUntil(
-        caches.open('video-store').then(function (cache) {
+        caches.open('8-puzzle').then(function (cache) {
             return cache.addAll([
                 '/',
                 '/index.html',
-                '/index.js',
-                '/worker.js',
-                '/app.css',
+                '/js/bundle.js',
+                '/js/puzzle-worker.js',
+                '/css/app.css',
                 '/assets/sprites/tileset.png',
                 '/assets/sprites/tileset.json',
                 '/assets/sounds/click1.ogg',
