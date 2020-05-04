@@ -224,11 +224,13 @@ function onPuzzleSolved() {
 
 function registerServiceWorker() {
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker
-            .register('./js/service_worker.js')
-            .then(function () {
-                console.log('Service Worker Registered');
-            });
+        navigator.serviceWorker.register('./service-worker.js').then(registration => {
+            console.log('SW registered: ', registration);
+        }).catch(registrationError => {
+            console.log('SW registration failed: ', registrationError);
+        });
+    } else {
+        console.log('no service worker!!!');
     }
 }
 
