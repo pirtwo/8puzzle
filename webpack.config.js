@@ -5,8 +5,7 @@ module.exports = {
   devtool: '#eval-source-map',
   entry: {
     'bundle': './src/index.js',
-    'puzzle-worker': './src/puzzle-worker.js',
-    'service-worker': './src/service-worker.js'
+    'puzzle-worker': './src/puzzle-worker.js'
   },  
   output: {
     globalObject: 'this',
