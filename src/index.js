@@ -129,10 +129,10 @@ function setup(loader, resources) {
     });
 
     bm.createBoard()
-        .setBackground(img)
-        .setPuzzleTexture(img)
         .createTiles()
         .createPins()
+        .setBackground(img)
+        .setPuzzleTexture(img)
         .setBoardPosition(
             body.width / 2 - bm.getWidth() / 2,
             body.height / 2 - bm.getWidth() / 2);
@@ -286,7 +286,7 @@ function onPuzzleSolved() {
 function registerServiceWorker() {
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('./service-worker.js').then(registration => {
-            console.log('SW registered: ', registration);
+            console.log('SW registered');
         }).catch(registrationError => {
             console.log('SW registration failed: ', registrationError);
         });
