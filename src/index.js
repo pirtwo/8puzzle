@@ -4,6 +4,7 @@ import Button from './scenes/button';
 import BoardManager from "./board-manager";
 import LoadingScene from './scenes/loading';
 import SettingScene from './scenes/settings';
+import PuzzleScene from './scenes/puzzle';
 
 const app = new PIXI.Application({
     autoStart: false,
@@ -34,20 +35,29 @@ let bm,
 let tileset;
 
 // scenes
-let settingScene, loadingScene;
+let puzzleSelectScene, settingScene, loadingScene;
 
 // sounds
 let clickSound;
 
 // buttons
-let solveButton, shuffleButton, settingButton;
+let puzzleSelectButton, solveButton, shuffleButton, settingButton;
 
 document.body.appendChild(app.view);
 
 app.loader
     .add('click', './assets/sounds/click1.ogg')
     .add('tileset', './assets/sprites/tileset.json')
-    .add('bg-01', './assets/images/view-01.jpg')
+    .add('puzzle-01', './assets/images/puzzle-01.jpg')
+    .add('puzzle-02', './assets/images/puzzle-02.jpg')
+    .add('puzzle-03', './assets/images/puzzle-03.jpg')
+    .add('puzzle-04', './assets/images/puzzle-04.jpg')
+    .add('puzzle-05', './assets/images/puzzle-05.jpg')
+    .add('puzzle-06', './assets/images/puzzle-06.jpg')
+    .add('puzzle-07', './assets/images/puzzle-07.jpg')
+    .add('puzzle-08', './assets/images/puzzle-08.jpg')
+    .add('puzzle-09', './assets/images/puzzle-09.jpg')
+    .add('puzzle-10', './assets/images/puzzle-10.jpg')
     .load(setup);
 
 function setup(loader, resources) {
@@ -55,7 +65,7 @@ function setup(loader, resources) {
     tileset = resources['tileset'].textures;
     clickSound = resources.click.sound;
 
-    let img = resources['bg-01'].texture;
+    let img = resources['puzzle-01'].texture;
 
     registerServiceWorker();
 
@@ -141,9 +151,28 @@ function setup(loader, resources) {
     });
     settingScene.hide();
 
+    puzzleSelectScene = new PuzzleScene({
+        width: app.screen.width,
+        height: app.screen.height,
+        boardManager: bm
+    });
+    puzzleSelectScene.hide();
+
+    puzzleSelectButton = new Button({
+        icon: tileset['movie.png'],
+        width: 60,
+        height: 60,
+        clickSound: clickSound,
+        idleTexture: tileset['yellow_button_idle.png'],
+        hoverTexture: tileset['yellow_button_hover.png'],
+        clickTexture: tileset['yellow_button_active.png'],
+        clickCallback: onPuzzleSelectClicked
+    });
+    puzzleSelectButton.position.set(0, 0);
+
     shuffleButton = new Button({
-        text: 'Shuffle',
-        width: 100,
+        icon: tileset['return.png'],
+        width: 60,
         height: 60,
         clickSound: clickSound,
         idleTexture: tileset['yellow_button_idle.png'],
@@ -151,11 +180,11 @@ function setup(loader, resources) {
         clickTexture: tileset['yellow_button_active.png'],
         clickCallback: onShuffleClicked
     });
-    shuffleButton.position.set(0, 0);
+    shuffleButton.position.set(70, 0);
 
     solveButton = new Button({
-        text: 'Solve',
-        width: 100,
+        icon: tileset['menuGrid.png'],
+        width: 60,
         height: 60,
         clickSound: clickSound,
         idleTexture: tileset['yellow_button_idle.png'],
@@ -163,7 +192,7 @@ function setup(loader, resources) {
         clickTexture: tileset['yellow_button_active.png'],
         clickCallback: onSolveClicked
     });
-    solveButton.position.set(110, 0);
+    solveButton.position.set(140, 0);
 
     settingButton = new Button({
         width: 60,
@@ -175,15 +204,15 @@ function setup(loader, resources) {
         clickTexture: tileset['yellow_button_active.png'],
         clickCallback: onSettingClicked
     });
-    settingButton.position.set(220, 0);
+    settingButton.position.set(210, 0);
     // -- end --
 
     head.addChild(title, tools);
     body.addChild(bm.board);
-    tools.addChild(shuffleButton, solveButton, settingButton);
+    tools.addChild(puzzleSelectButton, shuffleButton, solveButton, settingButton);
     tools.position.set(head.w - tools.width - 20, 20);
 
-    app.stage.addChild(head, body, settingScene, loadingScene);
+    app.stage.addChild(head, body, puzzleSelectScene, settingScene, loadingScene);
     app.start();
 }
 
@@ -194,6 +223,11 @@ function setup(loader, resources) {
 function update(delta) {
     bm.update(delta);
     loadingScene.update(delta);
+}
+
+function onPuzzleSelectClicked(e) {
+    console.log('select clicked!!!');
+    puzzleSelectScene.show();
 }
 
 /**
