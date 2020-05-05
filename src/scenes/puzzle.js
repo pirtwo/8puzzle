@@ -4,7 +4,8 @@ import Panel from './panel';
 import Button from './button';
 import {
     Text,
-    TextStyle
+    TextStyle,
+    Sprite
 } from 'pixi.js';
 
 export default class PuzzleScene extends Scene {
@@ -15,8 +16,15 @@ export default class PuzzleScene extends Scene {
     }) {
         super();
 
-        let text, puzzleSprite;
-        let tileset = app.loader.resources['tileset'].textures;
+        let sp = new Sprite(boardManager.texture),
+            currIndex = 0,
+            texture,
+            textures = this.getTextures(app.loader.resources),
+            tileset = app.loader.resources['tileset'].textures;
+
+        sp.width = sp.height = 200;
+        sp.anchor.set(0.5);
+
 
         this.panel = new Panel({
             width: 500,
@@ -45,7 +53,8 @@ export default class PuzzleScene extends Scene {
             clickTexture: tileset['green_button_active.png'],
             clickSound: app.loader.resources.click.sound,
             clickCallback: () => {
-
+                currIndex = currIndex - 1 < 0 ? 9 : currIndex - 1;
+                sp.texture = textures[currIndex];
             }
         });
         this.prevBtn.position.set(10, this.panel.h / 2 - 25);
@@ -61,7 +70,8 @@ export default class PuzzleScene extends Scene {
             clickTexture: tileset['green_button_active.png'],
             clickSound: app.loader.resources.click.sound,
             clickCallback: () => {
-
+                currIndex = currIndex + 1 > 9 ? 0 : currIndex + 1;
+                sp.texture = textures[currIndex];
             }
         });
         this.nextBtn.position.set(this.panel.w - 60, this.panel.h / 2 - 25);
@@ -77,10 +87,14 @@ export default class PuzzleScene extends Scene {
             clickTexture: tileset['green_button_active.png'],
             clickSound: app.loader.resources.click.sound,
             clickCallback: () => {
-
+                boardManager.setBackground(textures[currIndex])
+                    .setPuzzleTexture(textures[currIndex]);
+                this.hide();
             }
         });
-        this.okBtn.position.set(10, 50);
+        this.okBtn.position.set(
+            this.panel.w - this.okBtn.w - 10,
+            this.panel.h - this.okBtn.h - 10);
         this.panel.body.addChild(this.okBtn);
 
         // cancel btn
@@ -96,11 +110,25 @@ export default class PuzzleScene extends Scene {
                 this.hide();
             }
         });
-        this.cancelBtn.position.set(110, 50);
+        this.cancelBtn.position.set(
+            this.panel.w - 2 * this.cancelBtn.w - 20,
+            this.panel.h - this.cancelBtn.h - 10);
         this.panel.body.addChild(this.cancelBtn);
+
+        sp.position.set(this.panel.w / 2, this.panel.h / 2);
+        this.panel.body.addChild(sp);
 
         this.panel.putCenter();
         this.addChild(this.panel);
+    }
+
+    getTextures(resources) {
+        let textures = [];
+
+        for (let i = 1; i <= 10; i++) {
+            textures.push(resources[`puzzle-${ i < 10 ? '0' + i : i}`].texture);
+        }
+        return textures;
     }
 
     update(delta) {
