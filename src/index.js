@@ -187,28 +187,48 @@ function setup(loader, resources) {
     app.start();
 }
 
+/**
+ * updates game logic.
+ * @param {number} delta 
+ */
 function update(delta) {
     bm.update(delta);
     loadingScene.update(delta);
 }
 
+/**
+ * callback function for solve button click event.
+ * @param {object} e 
+ */
 function onSolveClicked(e) {
     console.log('solve clicked!!!')
     bm.solve();
     loadingScene.show();
 }
 
+/**
+ * callback function for shuffle button click event.
+ * @param {object} e 
+ */
 function onShuffleClicked(e) {
     console.log('shuffle clicked!!!')
     bm.reset();
     bm.shuffle();
 }
 
+/**
+ * callback function for setting button click event.
+ * @param {object} e 
+ */
 function onSettingClicked(e) {
     console.log('setting clicked!!!')
     settingScene.show();
 }
 
+/**
+ * handel the click on the tile.
+ * @param {object} e 
+ */
 function onTileClicked(e) {
     let tile = e.target,
         move = bm.canTileMove(tile);
@@ -218,10 +238,17 @@ function onTileClicked(e) {
     }
 }
 
+/**
+ * this function will be called when puzzle
+ * solved by board manager. 
+ */
 function onPuzzleSolved() {
     loadingScene.hide();
 }
 
+/**
+ * registers a service worker for PWA application.
+ */
 function registerServiceWorker() {
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('./service-worker.js').then(registration => {
