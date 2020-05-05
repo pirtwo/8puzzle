@@ -84,10 +84,28 @@ export default class BoardManager {
         this.background.tint = 0x5c5c5c;
         this.background.width = this.background.height = this.getWidth();
         return this;
-    }
+    }    
 
     setPuzzleTexture(texture) {
         this.texture = texture;
+        let frameWidth = Math.floor(this.texture.width / this.cols);
+
+        for (let row = 0; row < this.rows; row++) {
+            for (let col = 0; col < this.cols; col++) {                
+                let tile = this.tiles[row * this.cols + col];
+                if (!tile.isEmpty) {
+                    let frame = new Rectangle(
+                        col * frameWidth,
+                        row * frameWidth,
+                        frameWidth,
+                        frameWidth);
+                    let sp = tile.children[0];
+                    sp.texture = new Texture(this.texture, frame);
+                    sp.width = sp.height = this.tileWidth;
+                }
+            }
+        }
+
         return this;
     }
 
@@ -194,8 +212,7 @@ export default class BoardManager {
     createTiles() {
         let ctx,
             tile,
-            tileNum = 1,
-            tileText;
+            tileNum = 1;
 
         let textStyle = new TextStyle({
             fontFamily: 'Arial',
@@ -204,8 +221,6 @@ export default class BoardManager {
             fontWeight: 'bold',
             fill: 0x000000
         });
-
-        let frameWidth = Math.floor(this.texture.width / this.cols)
 
         for (let row = 0; row < this.rows; row++) {
             for (let col = 0; col < this.cols; col++) {
@@ -226,13 +241,7 @@ export default class BoardManager {
                     tile.addChild(ctx.drawRect(0, 0, this.tileWidth, this.tileWidth));
                     ctx.endFill();
                 } else {
-                    let frame = new Rectangle(
-                        col * frameWidth,
-                        row * frameWidth,
-                        frameWidth,
-                        frameWidth);
-                    let sp = new Sprite(new Texture(this.texture, frame));
-                    sp.width = sp.height = this.tileWidth;
+                    let sp = new Sprite();
                     tile.addChild(sp);
                 }
 
