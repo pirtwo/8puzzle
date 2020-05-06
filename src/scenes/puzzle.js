@@ -18,17 +18,16 @@ export default class PuzzleScene extends Scene {
 
         let sp = new Sprite(boardManager.texture),
             currIndex = 0,
-            texture,
             textures = this.getTextures(app.loader.resources),
             tileset = app.loader.resources['tileset'].textures;
 
-        sp.width = sp.height = 200;
+        sp.width = sp.height = 300;
         sp.anchor.set(0.5);
 
 
         this.panel = new Panel({
             width: 500,
-            height: 400,
+            height: 500,
             backdropWidth: width,
             backdropHeight: height
         });
@@ -48,9 +47,9 @@ export default class PuzzleScene extends Scene {
             width: 50,
             height: 60,
             icon: tileset['left.png'],
-            idleTexture: tileset['green_button_idle.png'],
-            hoverTexture: tileset['green_button_hover.png'],
-            clickTexture: tileset['green_button_active.png'],
+            idleTexture: tileset['yellow_button_idle.png'],
+            hoverTexture: tileset['yellow_button_hover.png'],
+            clickTexture: tileset['yellow_button_active.png'],
             clickSound: app.loader.resources.click.sound,
             clickCallback: () => {
                 currIndex = currIndex - 1 < 0 ? 9 : currIndex - 1;
@@ -65,9 +64,9 @@ export default class PuzzleScene extends Scene {
             width: 50,
             height: 60,
             icon: tileset['right.png'],
-            idleTexture: tileset['green_button_idle.png'],
-            hoverTexture: tileset['green_button_hover.png'],
-            clickTexture: tileset['green_button_active.png'],
+            idleTexture: tileset['yellow_button_idle.png'],
+            hoverTexture: tileset['yellow_button_hover.png'],
+            clickTexture: tileset['yellow_button_active.png'],
             clickSound: app.loader.resources.click.sound,
             clickCallback: () => {
                 currIndex = currIndex + 1 > 9 ? 0 : currIndex + 1;
@@ -82,9 +81,9 @@ export default class PuzzleScene extends Scene {
             text: 'OK',
             width: 100,
             height: 50,
-            idleTexture: tileset['green_button_idle.png'],
-            hoverTexture: tileset['green_button_hover.png'],
-            clickTexture: tileset['green_button_active.png'],
+            idleTexture: tileset['yellow_button_idle.png'],
+            hoverTexture: tileset['yellow_button_hover.png'],
+            clickTexture: tileset['yellow_button_active.png'],
             clickSound: app.loader.resources.click.sound,
             clickCallback: () => {
                 boardManager.setBackground(textures[currIndex])
@@ -93,8 +92,8 @@ export default class PuzzleScene extends Scene {
             }
         });
         this.okBtn.position.set(
-            this.panel.w - this.okBtn.w - 10,
-            this.panel.h - this.okBtn.h - 10);
+            this.panel.w - this.okBtn.w - 20,
+            this.panel.h - this.okBtn.h - 20);
         this.panel.body.addChild(this.okBtn);
 
         // cancel btn
@@ -102,17 +101,17 @@ export default class PuzzleScene extends Scene {
             text: 'CANCEL',
             width: 100,
             height: 50,
-            idleTexture: tileset['green_button_idle.png'],
-            hoverTexture: tileset['green_button_hover.png'],
-            clickTexture: tileset['green_button_active.png'],
+            idleTexture: tileset['yellow_button_idle.png'],
+            hoverTexture: tileset['yellow_button_hover.png'],
+            clickTexture: tileset['yellow_button_active.png'],
             clickSound: app.loader.resources.click.sound,
             clickCallback: () => {
                 this.hide();
             }
         });
         this.cancelBtn.position.set(
-            this.panel.w - 2 * this.cancelBtn.w - 20,
-            this.panel.h - this.cancelBtn.h - 10);
+            this.panel.w - 2 * this.cancelBtn.w - 30,
+            this.panel.h - this.cancelBtn.h - 20);
         this.panel.body.addChild(this.cancelBtn);
 
         sp.position.set(this.panel.w / 2, this.panel.h / 2);
