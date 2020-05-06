@@ -8,6 +8,7 @@ import PuzzleScene from './scenes/puzzle';
 
 const app = new PIXI.Application({
     autoStart: false,
+    antialias: true,
     width: window.innerWidth,
     height: window.innerHeight,
     backgroundColor: 0xffffff
