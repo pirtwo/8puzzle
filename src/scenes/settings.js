@@ -23,8 +23,8 @@ export default class SettingScene extends Scene {
         let tileset = app.loader.resources['tileset'].textures;
 
         this.panel = new Panel({
-            width: 300,
-            height: 300,
+            width: 500,
+            height: 500,
             backdropWidth: width,
             backdropHeight: height
         });
@@ -43,9 +43,9 @@ export default class SettingScene extends Scene {
             width: 50,
             height: 50,
             icon: tileset['audioOn.png'],
-            idleTexture: tileset['green_button_idle.png'],
-            hoverTexture: tileset['green_button_hover.png'],
-            clickTexture: tileset['green_button_active.png'],
+            idleTexture: tileset['yellow_button_idle.png'],
+            hoverTexture: tileset['yellow_button_hover.png'],
+            clickTexture: tileset['yellow_button_active.png'],
             clickSound: app.loader.resources.click.sound,
             clickCallback: () => {
                 if (uiSound.muted) {
@@ -64,9 +64,9 @@ export default class SettingScene extends Scene {
             width: 50,
             height: 50,
             icon: tileset['musicOff.png'],
-            idleTexture: tileset['green_button_idle.png'],
-            hoverTexture: tileset['green_button_hover.png'],
-            clickTexture: tileset['green_button_active.png'],
+            idleTexture: tileset['yellow_button_idle.png'],
+            hoverTexture: tileset['yellow_button_hover.png'],
+            clickTexture: tileset['yellow_button_active.png'],
             clickSound: app.loader.resources.click.sound,
             clickCallback: () => {
                 if (gameMusic.muted) {
@@ -85,9 +85,9 @@ export default class SettingScene extends Scene {
             width: 50,
             height: 50,
             icon: tileset['checkmark.png'],
-            idleTexture: tileset['green_button_idle.png'],
-            hoverTexture: tileset['green_button_hover.png'],
-            clickTexture: tileset['green_button_active.png'],
+            idleTexture: tileset['yellow_button_idle.png'],
+            hoverTexture: tileset['yellow_button_hover.png'],
+            clickTexture: tileset['yellow_button_active.png'],
             clickSound: app.loader.resources.click.sound,
             clickCallback: () => {
                 if (this.hasTileNumber) {
@@ -108,15 +108,17 @@ export default class SettingScene extends Scene {
             text: 'CLOSE',
             width: 100,
             height: 50,
-            idleTexture: tileset['green_button_idle.png'],
-            hoverTexture: tileset['green_button_hover.png'],
-            clickTexture: tileset['green_button_active.png'],
+            idleTexture: tileset['yellow_button_idle.png'],
+            hoverTexture: tileset['yellow_button_hover.png'],
+            clickTexture: tileset['yellow_button_active.png'],
             clickSound: app.loader.resources.click.sound,
             clickCallback: () => {
                 this.hide();
             }
         });
-        this.closeBtn.position.set(this.panel.w / 2 - 50, this.panel.h - 60);
+        this.closeBtn.position.set(
+            this.panel.w -this.closeBtn.w - 20, 
+            this.panel.h - this.closeBtn.h - 20);
         this.panel.body.addChild(this.closeBtn);
 
         text = new Text('SOUND: ', textStyle);
