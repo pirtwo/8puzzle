@@ -24,14 +24,14 @@ export default class Panel extends Scene {
         this.background = undefined;
         this.backdrop = undefined;
 
-        ctx.beginFill(0xffffff);
+        ctx.beginFill(0xf5f5f5);
         this.background = ctx.drawRect(0, 0, width, height);
         this.body.addChild(this.background);
         this.body.position.set(width / 2, height / 2);
 
         if (hasBackdrop) {
             ctx = new Graphics();
-            ctx.beginFill(0xffffff, 0.5);
+            ctx.beginFill(0x383c42, 0.8);
             this.backdrop = ctx.drawRect(0, 0, backdropWidth, backdropHeight);
             this.backdrop.interactive = true;
             this.addChild(this.backdrop);
