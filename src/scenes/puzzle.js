@@ -21,7 +21,7 @@ export default class PuzzleScene extends Scene {
             textures = this.getTextures(app.loader.resources),
             tileset = app.loader.resources['tileset'].textures;
 
-        sp.width = sp.height = 250;
+        sp.width = sp.height = 350;
         sp.anchor.set(0.5);
 
 
@@ -37,9 +37,7 @@ export default class PuzzleScene extends Scene {
             fontSize: 20,
             fontStyle: 'normal',
             fontWeight: 'bold',
-            wordWrap: true,
-            wordWrapWidth: this.panel.width / 2,
-            align: 'center'
+            fill: 0xffffff
         });
 
         // show previous image btn
