@@ -25,7 +25,9 @@ let bm,
     menu,
     body,
     title,
-    tools;
+    tools,
+    textStyle,
+    btnTextStyle;
 
 // tileset
 let tileset;
@@ -62,6 +64,19 @@ function setup(loader, resources) {
     tileset = resources['tileset'].textures;
     music = resources.music.sound;
     clickSound = resources.click.sound;
+    textStyle = new TextStyle({
+        fontFamily: 'Courier',
+        fontSize: 25,
+        fontStyle: 'normal',
+        fontWeight: 'bold'
+    });
+    btnTextStyle = new TextStyle({
+        fontFamily: 'Courier',
+        fontSize: 20,
+        fontStyle: 'normal',
+        fontWeight: 'normal',
+        fill: 0x000000
+    });
 
     registerServiceWorker();
 
@@ -378,4 +393,8 @@ app.ticker.add((delta) => {
     update(delta)
 });
 
-export default app;
+export {
+    app,
+    textStyle,
+    btnTextStyle
+};
