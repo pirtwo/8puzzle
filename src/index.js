@@ -34,7 +34,7 @@ let tileset;
 let puzzleSelectScene, settingScene, loadingScene;
 
 // sounds
-let clickSound;
+let music, clickSound;
 
 // buttons
 let puzzleSelectButton, solveButton, shuffleButton, settingButton;
@@ -42,7 +42,8 @@ let puzzleSelectButton, solveButton, shuffleButton, settingButton;
 document.body.appendChild(app.view);
 
 app.loader
-    .add('click', './assets/sounds/click1.ogg')
+    .add('click', './assets/sounds/click.ogg')
+    .add('music', './assets/sounds/music.mp3')
     .add('tileset', './assets/sprites/tileset.json')
     .add('puzzle-01', './assets/images/puzzle-01.jpg')
     .add('puzzle-02', './assets/images/puzzle-02.jpg')
@@ -59,10 +60,10 @@ app.loader
 function setup(loader, resources) {
     app.stop();
     tileset = resources['tileset'].textures;
+    music = resources.music.sound;
     clickSound = resources.click.sound;
 
     registerServiceWorker();
-
 
     // -- sections --
     title = new Container();
@@ -144,8 +145,8 @@ function setup(loader, resources) {
     settingScene.hide();
 
     puzzleSelectScene = new PuzzleScene({
-        width: 500,
-        height: 400,
+        width: 600,
+        height: 500,
         boardManager: bm
     });
     puzzleSelectScene.hide();
@@ -209,6 +210,9 @@ function setup(loader, resources) {
     window.addEventListener('resize', (e) => {
         scaleToWindow(app.view);
     });
+
+    music.volume = 0.1;
+    music.play();
 
     app.start();
 }
