@@ -1,3 +1,4 @@
+import app from '../index';
 import Scene from '../scene';
 import Panel from './panel';
 import Spinner from './spinner';
@@ -14,17 +15,21 @@ export default class LoadingScene extends Scene {
     }) {
         super();
 
-        this.spinner = new Spinner();
+        this.spinner = new Spinner({
+            radius: 20,
+            spinnerRadius: 7,
+            speed: 20
+        });
         this.panel = new Panel({
-            width: 280,
-            height: 70,
-            backdropWidth: width,
-            backdropHeight: height
+            width: width,
+            height: height,
+            backdropWidth: app.view.width,
+            backdropHeight: app.view.height
         })
 
         let textStyle = new TextStyle({
             fontFamily: 'Arial',
-            fontSize: 20,
+            fontSize: 35,
             fontStyle: 'normal',
             fontWeight: 'bold',
             wordWrap: true,
@@ -39,8 +44,8 @@ export default class LoadingScene extends Scene {
         this.panel.body.addChild(this.spinner);
 
         this.panel.putCenter();
-        this.text.position.set(this.panel.w / 2, this.panel.h / 2);
-        this.spinner.position.set(30, this.panel.h / 2);
+        this.text.position.set(this.panel.w / 2 + 20, this.panel.h / 2);
+        this.spinner.position.set(50, this.panel.h / 2);
         this.addChild(this.panel);
     }
 
