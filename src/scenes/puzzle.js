@@ -21,15 +21,15 @@ export default class PuzzleScene extends Scene {
             textures = this.getTextures(app.loader.resources),
             tileset = app.loader.resources['tileset'].textures;
 
-        sp.width = sp.height = 300;
+        sp.width = sp.height = 250;
         sp.anchor.set(0.5);
 
 
         this.panel = new Panel({
-            width: 500,
-            height: 500,
-            backdropWidth: width,
-            backdropHeight: height
+            width: width,
+            height: height,
+            backdropWidth: app.view.width,
+            backdropHeight: app.view.height
         });
 
         let textStyle = new TextStyle({
@@ -114,7 +114,7 @@ export default class PuzzleScene extends Scene {
             this.panel.h - this.cancelBtn.h - 20);
         this.panel.body.addChild(this.cancelBtn);
 
-        sp.position.set(this.panel.w / 2, this.panel.h / 2);
+        sp.position.set(this.panel.w / 2, sp.height / 2 + 50);
         this.panel.body.addChild(sp);
 
         this.panel.putCenter();

@@ -23,10 +23,10 @@ export default class SettingScene extends Scene {
         let tileset = app.loader.resources['tileset'].textures;
 
         this.panel = new Panel({
-            width: 500,
-            height: 500,
-            backdropWidth: width,
-            backdropHeight: height
+            width: width,
+            height: height,
+            backdropWidth: app.view.width,
+            backdropHeight: app.view.height
         });
 
         let textStyle = new TextStyle({
