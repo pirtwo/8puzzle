@@ -25,7 +25,8 @@ export default class Panel extends Scene {
         this.backdrop = undefined;
 
         ctx.beginFill(0xf5f5f5);
-        this.background = ctx.drawRect(0, 0, width, height);
+        ctx.lineStyle(3, 0x808080);
+        this.background = ctx.drawRoundedRect(0, 0, width, height, 10);
         this.body.addChild(this.background);
         this.body.position.set(width / 2, height / 2);
 
