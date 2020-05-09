@@ -21,13 +21,8 @@ const {
     Container
 } = PIXI;
 
-const ScreenCenter = {
-    x: app.screen.width / 2,
-    y: app.screen.height / 2
-}
-
 let bm,
-    head,
+    menu,
     body,
     title,
     tools;
@@ -66,42 +61,41 @@ function setup(loader, resources) {
     tileset = resources['tileset'].textures;
     clickSound = resources.click.sound;
 
-    let img = resources['puzzle-01'].texture;
-
     registerServiceWorker();
+
 
     // -- sections --
     title = new Container();
-    head = new Container();
+    menu = new Container();
     body = new Container();
     tools = new Container();
 
-    head.paddingTop = 5;
-    head.paddingBot = 0;
-    body.paddingTop = 0;
-    body.paddingBot = 5;
+    body.w = 768;
+    body.h = 1024;
+    menu.w = 768;
+    menu.h = 100;
 
-    head.w = Math.floor(app.screen.width / 2) + 40;
-    head.h = 100;
-    body.w = Math.floor(app.screen.width / 2) + 40;
-    body.h = app.screen.height - head.h -
-        (head.paddingTop + head.paddingBot + body.paddingTop + body.paddingBot);
+    app.view.width = body.w;
+    app.view.height = body.h;
+    scaleToWindow(app.view);
 
+    // add body bg
     let ctx = new Graphics();
-    ctx.beginFill(0xf99d07);
-    ctx.drawRect(0, 0, head.w, head.h);
-    ctx.endFill();
-    head.addChild(ctx);
-
-    ctx = new Graphics();
     ctx.beginFill(0xf99d07, 0.85);
     ctx.drawRect(0, 0, body.w, body.h);
     ctx.endFill();
     body.addChild(ctx);
 
+    // add menu bg
+    ctx = new Graphics();
+    ctx.beginFill(0xf99d07);
+    ctx.drawRect(0, 0, menu.w, menu.h);
+    ctx.endFill();
+    menu.addChild(ctx);
+
     let titleStyle = new TextStyle({
         fontFamily: 'Courier',
-        fontSize: 40,
+        fontSize: 60,
         fontStyle: 'normal',
         fontWeight: 'bold',
         fill: ['#ffffff', '#f9e104'],
@@ -112,18 +106,17 @@ function setup(loader, resources) {
     title.addChild(titleText);
     title.position.set(20, 20);
 
-    head.position.set(ScreenCenter.x - head.width / 2, head.paddingTop);
-    body.position.set(ScreenCenter.x - head.width / 2,
-        head.height + head.paddingTop + head.paddingBot + body.paddingTop);
+    body.position.set(0, 0);
+    menu.position.set(0, 0);
     // -- end --
 
     // -- assets --    
     bm = new BoardManager({
         rowNum: 3,
         colNum: 3,
-        tileWidth: Math.floor(body.width / 4),
+        tileWidth: 240,
         tileMargin: 1,
-        tileSpeed: 15,
+        tileSpeed: 30,
         emptyTile: 9,
         tileClickCallback: onTileClicked,
         solveCallback: onPuzzleSolved
@@ -132,37 +125,35 @@ function setup(loader, resources) {
     bm.createBoard()
         .createTiles()
         .createPins()
-        .setBackground(img)
-        .setPuzzleTexture(img)
-        .setBoardPosition(
-            body.width / 2 - bm.getWidth() / 2,
-            body.height / 2 - bm.getWidth() / 2);
+        .setBackground(resources['puzzle-01'].texture)
+        .setPuzzleTexture(resources['puzzle-01'].texture)
+        .setBoardPosition(body.width / 2 - bm.getWidth() / 2, menu.h + 40);
 
     loadingScene = new LoadingScene({
         text: 'solving puzzle ...',
-        width: app.screen.width,
-        height: app.screen.height
+        width: 400,
+        height: 150
     });
     loadingScene.hide();
 
     settingScene = new SettingScene({
-        width: app.screen.width,
-        height: app.screen.height,
+        width: 500,
+        height: 400,
         boardManager: bm
     });
     settingScene.hide();
 
     puzzleSelectScene = new PuzzleScene({
-        width: app.screen.width,
-        height: app.screen.height,
+        width: 500,
+        height: 400,
         boardManager: bm
     });
     puzzleSelectScene.hide();
 
     puzzleSelectButton = new Button({
         icon: tileset['movie.png'],
-        width: 60,
-        height: 60,
+        width: 70,
+        height: 70,
         clickSound: clickSound,
         idleTexture: tileset['yellow_button_idle.png'],
         hoverTexture: tileset['yellow_button_hover.png'],
@@ -173,31 +164,31 @@ function setup(loader, resources) {
 
     shuffleButton = new Button({
         icon: tileset['return.png'],
-        width: 60,
-        height: 60,
+        width: 70,
+        height: 70,
         clickSound: clickSound,
         idleTexture: tileset['yellow_button_idle.png'],
         hoverTexture: tileset['yellow_button_hover.png'],
         clickTexture: tileset['yellow_button_active.png'],
         clickCallback: onShuffleClicked
     });
-    shuffleButton.position.set(70, 0);
+    shuffleButton.position.set(80, 0);
 
     solveButton = new Button({
         icon: tileset['menuGrid.png'],
-        width: 60,
-        height: 60,
+        width: 70,
+        height: 70,
         clickSound: clickSound,
         idleTexture: tileset['yellow_button_idle.png'],
         hoverTexture: tileset['yellow_button_hover.png'],
         clickTexture: tileset['yellow_button_active.png'],
         clickCallback: onSolveClicked
     });
-    solveButton.position.set(140, 0);
+    solveButton.position.set(160, 0);
 
     settingButton = new Button({
-        width: 60,
-        height: 60,
+        width: 70,
+        height: 70,
         icon: tileset['gear.png'],
         clickSound: clickSound,
         idleTexture: tileset['yellow_button_idle.png'],
@@ -205,15 +196,20 @@ function setup(loader, resources) {
         clickTexture: tileset['yellow_button_active.png'],
         clickCallback: onSettingClicked
     });
-    settingButton.position.set(210, 0);
+    settingButton.position.set(240, 0);
     // -- end --
 
-    head.addChild(title, tools);
-    body.addChild(bm.board);
+    menu.addChild(title, tools);
     tools.addChild(puzzleSelectButton, shuffleButton, solveButton, settingButton);
-    tools.position.set(head.w - tools.width - 20, 20);
+    tools.position.set(menu.w - tools.width - 20, 20);
+    body.addChild(menu, bm.board);
 
-    app.stage.addChild(head, body, puzzleSelectScene, settingScene, loadingScene);
+    app.stage.addChild(body, puzzleSelectScene, settingScene, loadingScene);
+
+    window.addEventListener('resize', (e) => {
+        scaleToWindow(app.view);
+    });
+
     app.start();
 }
 
@@ -279,6 +275,84 @@ function onTileClicked(e) {
  */
 function onPuzzleSolved() {
     loadingScene.hide();
+}
+
+function scaleToWindow(canvas, backgroundColor) {
+    var scaleX, scaleY, scale, center;
+
+    //1. Scale the canvas to the correct size
+    //Figure out the scale amount on each axis
+    scaleX = window.innerWidth / canvas.offsetWidth;
+    scaleY = window.innerHeight / canvas.offsetHeight;
+
+    //Scale the canvas based on whichever value is less: `scaleX` or `scaleY`
+    scale = Math.min(scaleX, scaleY);
+    canvas.style.transformOrigin = "0 0";
+    canvas.style.transform = "scale(" + scale + ")";
+
+    //2. Center the canvas.
+    //Decide whether to center the canvas vertically or horizontally.
+    //Wide canvases should be centered vertically, and 
+    //square or tall canvases should be centered horizontally
+    if (canvas.offsetWidth > canvas.offsetHeight) {
+        if (canvas.offsetWidth * scale < window.innerWidth) {
+            center = "horizontally";
+        } else {
+            center = "vertically";
+        }
+    } else {
+        if (canvas.offsetHeight * scale < window.innerHeight) {
+            center = "vertically";
+        } else {
+            center = "horizontally";
+        }
+    }
+
+    //Center horizontally (for square or tall canvases)
+    var margin;
+    if (center === "horizontally") {
+        margin = (window.innerWidth - canvas.offsetWidth * scale) / 2;
+        canvas.style.marginTop = 0 + "px";
+        canvas.style.marginBottom = 0 + "px";
+        canvas.style.marginLeft = margin + "px";
+        canvas.style.marginRight = margin + "px";
+    }
+
+    //Center vertically (for wide canvases) 
+    if (center === "vertically") {
+        margin = (window.innerHeight - canvas.offsetHeight * scale) / 2;
+        canvas.style.marginTop = margin + "px";
+        canvas.style.marginBottom = margin + "px";
+        canvas.style.marginLeft = 0 + "px";
+        canvas.style.marginRight = 0 + "px";
+    }
+
+    //3. Remove any padding from the canvas  and body and set the canvas
+    //display style to "block"
+    canvas.style.paddingLeft = 0 + "px";
+    canvas.style.paddingRight = 0 + "px";
+    canvas.style.paddingTop = 0 + "px";
+    canvas.style.paddingBottom = 0 + "px";
+    canvas.style.display = "block";
+
+    //4. Set the color of the HTML body background
+    document.body.style.backgroundColor = backgroundColor;
+
+    //Fix some quirkiness in scaling for Safari
+    var ua = navigator.userAgent.toLowerCase();
+    if (ua.indexOf("safari") != -1) {
+        if (ua.indexOf("chrome") > -1) {
+            // Chrome
+        } else {
+            // Safari
+            //canvas.style.maxHeight = "100%";
+            //canvas.style.minHeight = "100%";
+        }
+    }
+
+    //5. Return the `scale` value. This is important, because you'll nee this value 
+    //for correct hit testing between the pointer and sprites
+    return scale;
 }
 
 /**
