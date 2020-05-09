@@ -1,10 +1,12 @@
-import app from '../index';
 import Scene from '../scene';
 import Panel from './panel';
 import Spinner from './spinner';
 import {
-    Text,
-    TextStyle
+    app,
+    textStyle
+} from '../index';
+import {
+    Text
 } from 'pixi.js';
 
 export default class LoadingScene extends Scene {
@@ -25,16 +27,6 @@ export default class LoadingScene extends Scene {
             height: height,
             backdropWidth: app.view.width,
             backdropHeight: app.view.height
-        })
-
-        let textStyle = new TextStyle({
-            fontFamily: 'Arial',
-            fontSize: 35,
-            fontStyle: 'normal',
-            fontWeight: 'bold',
-            wordWrap: true,
-            wordWrapWidth: this.panel.width / 2,
-            align: 'center'
         });
 
         this.text = new Text(text, textStyle);
@@ -45,7 +37,7 @@ export default class LoadingScene extends Scene {
 
         this.panel.putCenter();
         this.text.position.set(this.panel.w / 2 + 20, this.panel.h / 2);
-        this.spinner.position.set(50, this.panel.h / 2);
+        this.spinner.position.set(70, this.panel.h / 2);
         this.addChild(this.panel);
     }
 

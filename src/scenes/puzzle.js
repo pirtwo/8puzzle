@@ -1,10 +1,13 @@
-import app from '../index';
 import Scene from '../scene';
 import Panel from './panel';
 import Button from './button';
 import {
+    app,
+    textStyle,
+    btnTextStyle
+} from '../index';
+import {
     Text,
-    TextStyle,
     Sprite
 } from 'pixi.js';
 
@@ -24,20 +27,11 @@ export default class PuzzleScene extends Scene {
         sp.width = sp.height = 350;
         sp.anchor.set(0.5);
 
-
         this.panel = new Panel({
             width: width,
             height: height,
             backdropWidth: app.view.width,
             backdropHeight: app.view.height
-        });
-
-        let textStyle = new TextStyle({
-            fontFamily: 'Arial',
-            fontSize: 20,
-            fontStyle: 'normal',
-            fontWeight: 'bold',
-            fill: 0xffffff
         });
 
         // show previous image btn
@@ -79,6 +73,7 @@ export default class PuzzleScene extends Scene {
             text: 'OK',
             width: 100,
             height: 50,
+            textStyle: btnTextStyle,
             idleTexture: tileset['yellow_button_idle.png'],
             hoverTexture: tileset['yellow_button_hover.png'],
             clickTexture: tileset['yellow_button_active.png'],
@@ -99,6 +94,7 @@ export default class PuzzleScene extends Scene {
             text: 'CANCEL',
             width: 100,
             height: 50,
+            textStyle: btnTextStyle,
             idleTexture: tileset['yellow_button_idle.png'],
             hoverTexture: tileset['yellow_button_hover.png'],
             clickTexture: tileset['yellow_button_active.png'],

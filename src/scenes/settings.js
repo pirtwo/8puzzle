@@ -1,7 +1,11 @@
-import app from '../index';
 import Scene from '../scene';
 import Panel from './panel';
 import Button from './button';
+import {
+    app,
+    textStyle,
+    btnTextStyle
+} from '../index';
 import {
     Text,
     TextStyle
@@ -17,7 +21,7 @@ export default class SettingScene extends Scene {
 
         this.hasTileNumber = true;
         let uiSound = app.loader.resources.click.sound;
-        let gameMusic = app.loader.resources.click.sound;
+        let gameMusic = app.loader.resources.music.sound;
 
         let text;
         let tileset = app.loader.resources['tileset'].textures;
@@ -27,16 +31,6 @@ export default class SettingScene extends Scene {
             height: height,
             backdropWidth: app.view.width,
             backdropHeight: app.view.height
-        });
-
-        let textStyle = new TextStyle({
-            fontFamily: 'Arial',
-            fontSize: 20,
-            fontStyle: 'normal',
-            fontWeight: 'bold',
-            wordWrap: true,
-            wordWrapWidth: this.panel.width / 2,
-            align: 'center'
         });
 
         this.soundButton = new Button({
@@ -57,7 +51,7 @@ export default class SettingScene extends Scene {
                 }
             }
         });
-        this.soundButton.position.set(200, 10);
+        this.soundButton.position.set(400, 30);
         this.panel.body.addChild(this.soundButton);
 
         this.musicButton = new Button({
@@ -71,14 +65,14 @@ export default class SettingScene extends Scene {
             clickCallback: () => {
                 if (gameMusic.muted) {
                     gameMusic.muted = false;
-                    this.musicButton.icon.texture = tileset['musicOn.png'];
+                    this.musicButton.icon.texture = tileset['musicOff.png'];
                 } else {
                     gameMusic.muted = true;
-                    this.musicButton.icon.texture = tileset['musicOff.png'];
+                    this.musicButton.icon.texture = tileset['musicOn.png'];
                 }
             }
         });
-        this.musicButton.position.set(200, 70);
+        this.musicButton.position.set(400, 90);
         this.panel.body.addChild(this.musicButton);
 
         this.tileNumberButton = new Button({
@@ -101,13 +95,14 @@ export default class SettingScene extends Scene {
                 }
             }
         });
-        this.tileNumberButton.position.set(200, 130);
+        this.tileNumberButton.position.set(400, 150);
         this.panel.body.addChild(this.tileNumberButton);
-        
+
         this.closeBtn = new Button({
             text: 'CLOSE',
             width: 100,
             height: 50,
+            textStyle: btnTextStyle,
             idleTexture: tileset['yellow_button_idle.png'],
             hoverTexture: tileset['yellow_button_hover.png'],
             clickTexture: tileset['yellow_button_active.png'],
@@ -117,20 +112,20 @@ export default class SettingScene extends Scene {
             }
         });
         this.closeBtn.position.set(
-            this.panel.w -this.closeBtn.w - 20, 
+            this.panel.w - this.closeBtn.w - 20,
             this.panel.h - this.closeBtn.h - 20);
         this.panel.body.addChild(this.closeBtn);
 
-        text = new Text('SOUND: ', textStyle);
-        text.position.set(20, 20);
+        text = new Text('SOUND', textStyle);
+        text.position.set(30, 40);
         this.panel.body.addChild(text);
 
-        text = new Text('MUSIC: ', textStyle);
-        text.position.set(20, 80);
+        text = new Text('MUSIC', textStyle);
+        text.position.set(30, 100);
         this.panel.body.addChild(text);
 
-        text = new Text('TILE NUMBER: ', textStyle);
-        text.position.set(20, 140);
+        text = new Text('TILE NUMBER', textStyle);
+        text.position.set(30, 160);
         this.panel.body.addChild(text);
 
         this.panel.putCenter();
