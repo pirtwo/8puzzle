@@ -1,7 +1,6 @@
 import Scene from '../scene';
 import {
     Text,
-    TextStyle,
     Sprite
 } from 'pixi.js';
 
@@ -10,6 +9,7 @@ export default class Button extends Scene {
         text = '',
         width,
         height,
+        textStyle,
         icon = null,
         idleTexture,
         hoverTexture,
@@ -26,17 +26,7 @@ export default class Button extends Scene {
         this.hoverTexture = hoverTexture;
         this.clickTexture = clickTexture;
         this.clickCallback = clickCallback;
-
-        let textStyle = new TextStyle({
-            fontFamily: 'Arial',
-            fontSize: 20,
-            fontStyle: 'normal',
-            fontWeight: 'bold',
-            wordWrap: true,
-            wordWrapWidth: this.w / 2,
-            align: 'center'
-        });
-
+        
         this.sprite = new Sprite(idleTexture);
         this.sprite.width = this.w;
         this.sprite.height = this.h;
