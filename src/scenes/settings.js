@@ -61,7 +61,7 @@ export default class SettingScene extends Scene {
         this.musicButton = new Button({
             width: 50,
             height: 50,
-            icon: tileset['musicOff.png'],
+            icon: tileset['musicOn.png'],
             idleTexture: tileset['yellow_button_idle.png'],
             hoverTexture: tileset['yellow_button_hover.png'],
             clickTexture: tileset['yellow_button_active.png'],
@@ -69,10 +69,10 @@ export default class SettingScene extends Scene {
             clickCallback: () => {
                 if (gameMusic.muted) {
                     gameMusic.muted = false;
-                    this.musicButton.icon.texture = tileset['musicOff.png'];
+                    this.musicButton.icon.texture = tileset['musicOn.png'];
                 } else {
                     gameMusic.muted = true;
-                    this.musicButton.icon.texture = tileset['musicOn.png'];
+                    this.musicButton.icon.texture = tileset['musicOff.png'];
                 }
             }
         });
