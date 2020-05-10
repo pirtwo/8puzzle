@@ -79,8 +79,12 @@ export default class PuzzleScene extends Scene {
             clickTexture: tileset['yellow_button_active.png'],
             clickSound: app.loader.resources.click.sound,
             clickCallback: () => {
-                boardManager.setBackground(textures[currIndex])
-                    .setPuzzleTexture(textures[currIndex]);
+                boardManager
+                    .setBackground(textures[currIndex])
+                    .setPuzzleTexture(textures[currIndex])
+                    .hideBackground()
+                    .reset()
+                    .shuffle();
                 this.hide();
             }
         });
