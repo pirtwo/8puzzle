@@ -84,14 +84,14 @@ export default class BoardManager {
         this.background.tint = 0x5c5c5c;
         this.background.width = this.background.height = this.getWidth();
         return this;
-    }    
+    }
 
     setPuzzleTexture(texture) {
         this.texture = texture;
         let frameWidth = Math.floor(this.texture.width / this.cols);
 
         for (let row = 0; row < this.rows; row++) {
-            for (let col = 0; col < this.cols; col++) {                
+            for (let col = 0; col < this.cols; col++) {
                 let tile = this.tiles[row * this.cols + col];
                 if (!tile.isEmpty) {
                     let frame = new Rectangle(
@@ -117,55 +117,15 @@ export default class BoardManager {
     canTileMove(tile) {
         let emptyTile = this.getEmptyTile();
         if (tile === emptyTile) return false;
-        if (this.isTopNeighbor(emptyTile, tile))
+        if (utils.isTopNeighbor(emptyTile, tile))
             return ACTIONS.slideDown;
-        if (this.isBottomNeighbor(emptyTile, tile))
+        if (utils.isBottomNeighbor(emptyTile, tile))
             return ACTIONS.slideUp;
-        if (this.isLeftNeighbor(emptyTile, tile))
+        if (utils.isLeftNeighbor(emptyTile, tile))
             return ACTIONS.slideRight;
-        if (this.isRightNeighbor(emptyTile, tile))
+        if (utils.isRightNeighbor(emptyTile, tile))
             return ACTIONS.slideLeft;
         return false;
-    }
-
-    /**
-     * return true if tileA is a top neighbor of tileB.
-     * 
-     * @param {object} tileA 
-     * @param {object} tileB 
-     */
-    isTopNeighbor(tileA, tileB) {
-        return tileA.col == tileB.col && tileA.row + 1 == tileB.row;
-    }
-
-    /**
-     * return true if tileA is a bottom neighbor of tileB.
-     * 
-     * @param {object} tileA 
-     * @param {object} tileB 
-     */
-    isBottomNeighbor(tileA, tileB) {
-        return tileA.col == tileB.col && tileA.row - 1 == tileB.row;
-    }
-
-    /**
-     * return true if tileA is a left neighbor of tileB.
-     * 
-     * @param {object} tileA 
-     * @param {object} tileB 
-     */
-    isLeftNeighbor(tileA, tileB) {
-        return tileA.row == tileB.row && tileA.col + 1 == tileB.col;
-    }
-
-    /**
-     * return true if tileA is a right neighbor of tileB.
-     * 
-     * @param {object} tileA 
-     * @param {object} tileB 
-     */
-    isRightNeighbor(tileA, tileB) {
-        return tileA.row == tileB.row && tileA.col - 1 == tileB.col;
     }
 
     pushMove(move) {
@@ -192,18 +152,6 @@ export default class BoardManager {
         // draw board body
         ctx.lineStyle(1, 0x000000, 0.1);
         ctx.drawRect(0, 0, this.getWidth(), this.getHeight());
-
-        // draw grid
-        // for (let i = 1; i < this.rows; i++) {
-        //     ctx.moveTo(0, i * this.getCellWidth());
-        //     ctx.lineTo(this.getWidth(), i * this.getCellWidth());
-        // }
-
-        // for (let j = 1; j < this.cols; j++) {
-        //     ctx.moveTo(j * this.getCellWidth(), 0);
-        //     ctx.lineTo(j * this.getCellWidth(), this.getHeight());
-        // }
-
         this.board.addChild(ctx);
 
         return this;
@@ -338,14 +286,7 @@ export default class BoardManager {
             tile.position = this.getPin(cord.row, cord.col);
         }
 
-        console.log(arr);
-        console.log(this.tiles.map(t => {
-            return {
-                row: t.row,
-                col: t.col,
-                num: t.number
-            }
-        }));
+        return this;
     }
 
     solve() {
@@ -357,6 +298,7 @@ export default class BoardManager {
             start: true,
             state: currState.reduce((pre, cur) => `${pre}${cur}`)
         });
+        return this;
     }
 
     reset() {
@@ -373,6 +315,7 @@ export default class BoardManager {
                 tile.position = this.getPin(i, j);
             }
         }
+        return this;
     }
 
     execute() {
