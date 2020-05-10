@@ -60,6 +60,11 @@ app.loader
     .load(setup);
 
 function setup(loader, resources) {
+
+    // TODO: add tile click sound.
+    // TODO: add puzzle complete check.
+    // TODO: add game loading scene.
+
     app.stop();
     tileset = resources['tileset'].textures;
     music = resources.music.sound;

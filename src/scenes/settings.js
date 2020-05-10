@@ -17,6 +17,10 @@ export default class SettingScene extends Scene {
         height,
         boardManager
     }) {
+
+        // TODO: add PWA install button.
+        // TODO: add share button.
+
         super();
 
         this.hasTileNumber = true;
