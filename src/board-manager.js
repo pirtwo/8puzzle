@@ -139,6 +139,10 @@ export default class BoardManager {
         return true;
     }
 
+    hasMoves() {
+        return this.exectionQueue.length > 0;
+    }
+
     pushMove(move) {
         this.exectionQueue.push(move);
         return this;
