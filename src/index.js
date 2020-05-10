@@ -249,7 +249,7 @@ function update(delta) {
 }
 
 function onPuzzleSelectClicked(e) {
-    console.log('select clicked!!!');
+    if (bm.hasMoves()) return;
     puzzleSelectScene.show();
 }
 
@@ -258,7 +258,7 @@ function onPuzzleSelectClicked(e) {
  * @param {object} e 
  */
 function onSolveClicked(e) {
-    console.log('solve clicked!!!')
+    if (bm.hasMoves()) return;
     bm.solve();
     loadingScene.show();
 }
@@ -268,7 +268,7 @@ function onSolveClicked(e) {
  * @param {object} e 
  */
 function onShuffleClicked(e) {
-    console.log('shuffle clicked!!!')
+    if (bm.hasMoves()) return;
     bm.hideBackground().reset().shuffle();
 }
 
@@ -276,8 +276,7 @@ function onShuffleClicked(e) {
  * callback function for setting button click event.
  * @param {object} e 
  */
-function onSettingClicked(e) {
-    console.log('setting clicked!!!')
+function onSettingClicked(e) {    
     settingScene.show();
 }
 
