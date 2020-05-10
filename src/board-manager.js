@@ -22,7 +22,8 @@ export default class BoardManager {
         tileMargin = 5,
         tileSpeed = 10,
         solveCallback,
-        tileClickCallback
+        tileClickCallback,
+        puzzleCompleteCallback
     }) {
         this._srcTile;
         this._desTile;
@@ -33,6 +34,7 @@ export default class BoardManager {
         this.cols = cols;
         this.tiles = [];
         this.pins = [];
+        this.exectionQueue = [];
         this.texture = undefined;
         this.board = new Container();
         this.background = new Sprite();
@@ -40,10 +42,10 @@ export default class BoardManager {
         this.tileWidth = tileWidth;
         this.tileMargin = tileMargin;
         this.tileSpeed = tileSpeed;
-        this.exectionQueue = [];
+        this.emptyTileNumber = emptyTile;
         this.solveCallback = solveCallback;
         this.tileClickCallback = tileClickCallback;
-        this.emptyTileNumber = emptyTile;
+        this.puzzleCompleteCallback = puzzleCompleteCallback;
 
         this.board.addChild(this.background);
 
@@ -126,6 +128,15 @@ export default class BoardManager {
         if (utils.isRightNeighbor(emptyTile, tile))
             return ACTIONS.slideLeft;
         return false;
+    }
+
+    isPuzzleComplete() {
+        for (const tile of this.tiles) {
+            if (tile.number != tile.row * this.cols + tile.col + 1)
+                return false;
+        }
+
+        return true;
     }
 
     pushMove(move) {
@@ -334,6 +345,18 @@ export default class BoardManager {
         return this;
     }
 
+    showBackground() {
+        this.setTilesVisiblity(false);
+        this.background.tint = 0xffffff;
+        return this;
+    }
+
+    hideBackground() {
+        this.setTilesVisiblity(true);
+        this.background.tint = 0x5c5c5c;
+        return this;
+    }
+
     update(delta) {
         if (this._currMove) {
             this._srcTile.position.x +=
@@ -360,6 +383,7 @@ export default class BoardManager {
                 this._srcTile.position = this._srcPin;
                 this._desTile.position = this._desPin;
                 this.swapTiles(this._srcTile, this._desTile).execute();
+                if (this.isPuzzleComplete()) this.puzzleCompleteCallback();
             }
         }
     }
