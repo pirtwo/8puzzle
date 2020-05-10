@@ -61,8 +61,7 @@ app.loader
 
 function setup(loader, resources) {
 
-    // TODO: add tile click sound.
-    // TODO: add puzzle complete check.
+    // TODO: add tile click sound.    
     // TODO: add game loading scene.
 
     app.stop();
@@ -140,7 +139,8 @@ function setup(loader, resources) {
         tileSpeed: 30,
         emptyTile: 9,
         tileClickCallback: onTileClicked,
-        solveCallback: onPuzzleSolved
+        solveCallback: onPuzzleSolved,
+        puzzleCompleteCallback: onPuzzleComplete
     });
 
     bm.createBoard()
@@ -148,6 +148,7 @@ function setup(loader, resources) {
         .createPins()
         .setBackground(resources['puzzle-01'].texture)
         .setPuzzleTexture(resources['puzzle-01'].texture)
+        .shuffle()
         .setBoardPosition(body.width / 2 - bm.getWidth() / 2, menu.h + 40);
 
     loadingScene = new LoadingScene({
@@ -232,6 +233,7 @@ function setup(loader, resources) {
     });
 
     music.volume = 0.1;
+    music.loop = true;
     music.play();
 
     app.start();
@@ -267,8 +269,7 @@ function onSolveClicked(e) {
  */
 function onShuffleClicked(e) {
     console.log('shuffle clicked!!!')
-    bm.reset();
-    bm.shuffle();
+    bm.hideBackground().reset().shuffle();
 }
 
 /**
@@ -299,6 +300,10 @@ function onTileClicked(e) {
  */
 function onPuzzleSolved() {
     loadingScene.hide();
+}
+
+function onPuzzleComplete() {
+    bm.showBackground();
 }
 
 function scaleToWindow(canvas, backgroundColor) {
