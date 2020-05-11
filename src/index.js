@@ -2,6 +2,7 @@ import * as PIXI from "pixi.js";
 import Sound from "pixi-sound";
 import Button from './scenes/button';
 import BoardManager from "./board-manager";
+import SplashScreen from './scenes/splash';
 import LoadingScene from './scenes/loading';
 import SettingScene from './scenes/settings';
 import PuzzleScene from './scenes/puzzle';
@@ -9,8 +10,8 @@ import PuzzleScene from './scenes/puzzle';
 const app = new PIXI.Application({
     autoStart: false,
     antialias: true,
-    width: window.innerWidth,
-    height: window.innerHeight,
+    width: 768,
+    height: 1024,
     backgroundColor: 0xffffff
 });
 
@@ -21,28 +22,57 @@ const {
     Container
 } = PIXI;
 
+const textStyle = new TextStyle({
+        fontFamily: 'Courier New',
+        fontSize: 25,
+        fontStyle: 'normal',
+        fontWeight: 'bold',
+        fill: 0x3d3d3d
+    }),
+    btnTextStyle = new TextStyle({
+        fontFamily: 'Arial',
+        fontSize: 15,
+        fontStyle: 'normal',
+        fontWeight: 'bold',
+        fill: 0x3d3d3d
+    });
+
+
 let bm,
     menu,
     body,
     title,
     tools,
-    textStyle,
-    btnTextStyle,
     installPrompt;
 
 // tileset
 let tileset;
 
 // scenes
-let puzzleSelectScene, settingScene, loadingScene;
+let spalshScreen,
+    puzzleSelectScene,
+    settingScene,
+    loadingScene;
 
 // sounds
-let music, clickSound;
+let music,
+    clickSound;
 
 // buttons
-let puzzleSelectButton, solveButton, shuffleButton, settingButton;
+let puzzleSelectButton,
+    solveButton,
+    shuffleButton,
+    settingButton;
 
 document.body.appendChild(app.view);
+scaleToWindow(app.view);
+
+spalshScreen = new SplashScreen({
+    text: 'loading assets, please wait ...',
+    width: 768,
+    height: 1024
+});
+app.stage.addChild(spalshScreen);
 
 app.loader
     .add('click', './assets/sounds/click.ogg')
@@ -63,25 +93,12 @@ app.loader
 function setup(loader, resources) {
 
     // TODO: add game loading scene.
+    // TODO: fix button issue on touch
 
     app.stop();
     tileset = resources['tileset'].textures;
     music = resources.music.sound;
     clickSound = resources.click.sound;
-    textStyle = new TextStyle({
-        fontFamily: 'Courier New',
-        fontSize: 25,
-        fontStyle: 'normal',
-        fontWeight: 'bold',
-        fill: 0x3d3d3d
-    });
-    btnTextStyle = new TextStyle({
-        fontFamily: 'Arial Black',
-        fontSize: 15,
-        fontStyle: 'normal',
-        fontWeight: 'bold',
-        fill: 0x3d3d3d
-    });
 
     registerServiceWorker();
 
@@ -95,11 +112,7 @@ function setup(loader, resources) {
     body.h = 1024;
     menu.w = 768;
     menu.h = 100;
-
-    app.view.width = body.w;
-    app.view.height = body.h;
-    scaleToWindow(app.view);
-
+    
     // add body bg
     let ctx = new Graphics();
     ctx.beginFill(0xf99d07, 0.85);
@@ -227,15 +240,19 @@ function setup(loader, resources) {
     tools.position.set(menu.w - tools.width - 20, 20);
     body.addChild(menu, bm.board);
 
-    app.stage.addChild(body, puzzleSelectScene, settingScene, loadingScene);
-
-    window.addEventListener('resize', (e) => {
-        scaleToWindow(app.view);
-    });
+    app.stage.addChild(body, puzzleSelectScene, settingScene, loadingScene);    
 
     music.volume = 0.1;
     music.loop = true;
     music.play();
+
+    spalshScreen.ticker.destroy();
+    spalshScreen.destroy();
+    app.stage.removeChild(spalshScreen);
+
+    app.ticker.add((delta) => {
+        update(delta)
+    });
 
     app.start();
 }
@@ -385,6 +402,13 @@ function scaleToWindow(canvas, backgroundColor) {
 }
 
 /**
+ * listen to window resize event
+ */
+window.addEventListener('resize', (e) => {
+    scaleToWindow(app.view);
+});
+
+/**
  * catch PWA install prompt
  */
 window.addEventListener('beforeinstallprompt', e => {
@@ -407,10 +431,6 @@ function registerServiceWorker() {
         console.log('no service worker!!!');
     }
 }
-
-app.ticker.add((delta) => {
-    update(delta)
-});
 
 export {
     app,
