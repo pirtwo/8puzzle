@@ -69,17 +69,18 @@ function setup(loader, resources) {
     music = resources.music.sound;
     clickSound = resources.click.sound;
     textStyle = new TextStyle({
-        fontFamily: 'Courier',
+        fontFamily: 'Courier New',
         fontSize: 25,
         fontStyle: 'normal',
-        fontWeight: 'bold'
+        fontWeight: 'bold',
+        fill: 0x3d3d3d
     });
     btnTextStyle = new TextStyle({
-        fontFamily: 'Courier',
-        fontSize: 20,
+        fontFamily: 'Arial Black',
+        fontSize: 15,
         fontStyle: 'normal',
-        fontWeight: 'normal',
-        fill: 0x000000
+        fontWeight: 'bold',
+        fill: 0x3d3d3d
     });
 
     registerServiceWorker();
