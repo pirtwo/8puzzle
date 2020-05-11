@@ -4,7 +4,8 @@ import Button from './button';
 import {
     app,
     textStyle,
-    btnTextStyle
+    btnTextStyle,
+    installPrompt
 } from '../index';
 import {
     Text,
@@ -18,18 +19,16 @@ export default class SettingScene extends Scene {
         boardManager
     }) {
 
-        // TODO: add PWA install button.
         // TODO: add share button.
 
         super();
 
+        let text,
+            gameMusic = app.loader.resources.music.sound,
+            uiSound = app.loader.resources.click.sound,
+            tileset = app.loader.resources['tileset'].textures;
+
         this.hasTileNumber = true;
-        let uiSound = app.loader.resources.click.sound;
-        let gameMusic = app.loader.resources.music.sound;
-
-        let text;
-        let tileset = app.loader.resources['tileset'].textures;
-
         this.panel = new Panel({
             width: width,
             height: height,
@@ -37,6 +36,7 @@ export default class SettingScene extends Scene {
             backdropHeight: app.view.height
         });
 
+        // sound settings
         this.soundButton = new Button({
             width: 50,
             height: 50,
@@ -58,6 +58,7 @@ export default class SettingScene extends Scene {
         this.soundButton.position.set(400, 30);
         this.panel.body.addChild(this.soundButton);
 
+        // music settings
         this.musicButton = new Button({
             width: 50,
             height: 50,
@@ -79,6 +80,7 @@ export default class SettingScene extends Scene {
         this.musicButton.position.set(400, 90);
         this.panel.body.addChild(this.musicButton);
 
+        // board settings
         this.tileNumberButton = new Button({
             width: 50,
             height: 50,
@@ -101,6 +103,48 @@ export default class SettingScene extends Scene {
         });
         this.tileNumberButton.position.set(400, 150);
         this.panel.body.addChild(this.tileNumberButton);
+
+        // share button
+        this.shareButton = new Button({
+            width: 50,
+            height: 50,
+            icon: tileset['share2.png'],
+            idleTexture: tileset['yellow_button_idle.png'],
+            hoverTexture: tileset['yellow_button_hover.png'],
+            clickTexture: tileset['yellow_button_active.png'],
+            clickSound: app.loader.resources.click.sound,
+            clickCallback: () => {
+
+            }
+        });
+        this.shareButton.position.set(400, 210);
+        this.panel.body.addChild(this.shareButton);
+
+        // PWA install button
+        this.installButton = new Button({
+            width: 50,
+            height: 50,
+            icon: tileset['import.png'],
+            idleTexture: tileset['yellow_button_idle.png'],
+            hoverTexture: tileset['yellow_button_hover.png'],
+            clickTexture: tileset['yellow_button_active.png'],
+            clickSound: app.loader.resources.click.sound,
+            clickCallback: () => {
+                if (installPrompt) {
+                    installPrompt.prompt();
+                    console.log(installPrompt);
+                    installPrompt.userChoice.then(choice => {
+                        if (choice.outcome === 'accepted') {
+                            this.installText.visible = false;
+                            this.installButton.visible = false;
+                        }
+                    });
+                }
+            }
+        });
+        this.installButton.position.set(400, 270);
+        this.panel.body.addChild(this.installButton);
+        this.installButton.visible = false;
 
         this.closeBtn = new Button({
             text: 'CLOSE',
@@ -131,6 +175,20 @@ export default class SettingScene extends Scene {
         text = new Text('TILE NUMBER', textStyle);
         text.position.set(30, 160);
         this.panel.body.addChild(text);
+
+        text = new Text('SHARE :)', textStyle);
+        text.position.set(30, 220);
+        this.panel.body.addChild(text);
+
+        this.installText = new Text('INSTALL ON BROWSER', textStyle);
+        this.installText.position.set(30, 280);
+        this.installText.visible = false;
+        this.panel.body.addChild(this.installText);
+
+        if (installPrompt) {
+            this.installText.visible = true;
+            this.installButton.visible = true;
+        }
 
         this.panel.putCenter();
         this.addChild(this.panel);

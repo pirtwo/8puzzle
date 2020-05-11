@@ -27,7 +27,8 @@ let bm,
     title,
     tools,
     textStyle,
-    btnTextStyle;
+    btnTextStyle,
+    installPrompt;
 
 // tileset
 let tileset;
@@ -61,7 +62,6 @@ app.loader
 
 function setup(loader, resources) {
 
-    // TODO: add tile click sound.    
     // TODO: add game loading scene.
 
     app.stop();
@@ -160,7 +160,7 @@ function setup(loader, resources) {
 
     settingScene = new SettingScene({
         width: 500,
-        height: 400,
+        height: 450,
         boardManager: bm
     });
     settingScene.hide();
@@ -276,7 +276,7 @@ function onShuffleClicked(e) {
  * callback function for setting button click event.
  * @param {object} e 
  */
-function onSettingClicked(e) {    
+function onSettingClicked(e) {
     settingScene.show();
 }
 
@@ -384,6 +384,15 @@ function scaleToWindow(canvas, backgroundColor) {
 }
 
 /**
+ * catch PWA install prompt
+ */
+window.addEventListener('beforeinstallprompt', e => {
+    console.log('catch install prompt');
+    e.preventDefault();
+    installPrompt = e;
+});
+
+/**
  * registers a service worker for PWA application.
  */
 function registerServiceWorker() {
@@ -405,5 +414,6 @@ app.ticker.add((delta) => {
 export {
     app,
     textStyle,
-    btnTextStyle
+    btnTextStyle,
+    installPrompt
 };
