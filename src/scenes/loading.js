@@ -37,7 +37,7 @@ export default class LoadingScene extends Scene {
 
         this.panel.putCenter();
         this.text.position.set(this.panel.w / 2 + 20, this.panel.h / 2);
-        this.spinner.position.set(70, this.panel.h / 2);
+        this.spinner.position.set(50, this.panel.h / 2);
         this.addChild(this.panel);
     }
 
