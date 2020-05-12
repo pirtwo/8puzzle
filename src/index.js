@@ -101,10 +101,6 @@ function init() {
 }
 
 function setup(loader, resources) {
-
-    // TODO: add game loading scene.
-    // TODO: fix button issue on touch
-
     app.stop();
     tileset = resources['tileset'].textures;
     music = resources.music.sound;
@@ -152,7 +148,7 @@ function setup(loader, resources) {
         dropShadowDistance: 2
     }));
     title.addChild(titleText);
-    title.position.set(20, 20);
+    title.position.set(20, 10);
 
     body.position.set(0, 0);
     menu.position.set(0, 0);
