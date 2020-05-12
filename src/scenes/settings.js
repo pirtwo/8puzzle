@@ -22,13 +22,12 @@ export default class SettingScene extends Scene {
         // TODO: add share button.
 
         super();
-
         let text,
+            storage = localStorage,
             gameMusic = app.loader.resources.music.sound,
             uiSound = app.loader.resources.click.sound,
             tileset = app.loader.resources['tileset'].textures;
 
-        this.hasTileNumber = true;
         this.panel = new Panel({
             width: width,
             height: height,
@@ -36,11 +35,26 @@ export default class SettingScene extends Scene {
             backdropHeight: app.view.height
         });
 
+        // -- load settings --
+        uiSound.muted = 
+            !storage.getItem('hasUISound') ||
+            storage.getItem('hasUISound') == 'false' 
+            ? true : false;
+        gameMusic.muted = 
+            !storage.getItem('hasMusic') ||
+            storage.getItem('hasMusic') == 'false' 
+            ? true : false;
+        this.hasTileNumber = 
+            !storage.getItem('hasTileNumber') ||
+            storage.getItem('hasTileNumber') == 'true' 
+            ? true : false;
+        boardManager.setTilesNumberVisiblity(this.hasTileNumber);
+
         // sound settings
         this.soundButton = new Button({
             width: 50,
             height: 50,
-            icon: tileset['audioOn.png'],
+            icon: uiSound.muted ? tileset['audioOff.png'] : tileset['audioOn.png'],
             idleTexture: tileset['yellow_button_idle.png'],
             hoverTexture: tileset['yellow_button_hover.png'],
             clickTexture: tileset['yellow_button_active.png'],
@@ -53,6 +67,7 @@ export default class SettingScene extends Scene {
                     uiSound.muted = true;
                     this.soundButton.icon.texture = tileset['audioOff.png'];
                 }
+                storage.setItem('hasUISound', !uiSound.muted);
             }
         });
         this.soundButton.position.set(400, 30);
@@ -62,7 +77,7 @@ export default class SettingScene extends Scene {
         this.musicButton = new Button({
             width: 50,
             height: 50,
-            icon: tileset['musicOn.png'],
+            icon: gameMusic.muted ? tileset['musicOff.png'] : tileset['musicOn.png'],
             idleTexture: tileset['yellow_button_idle.png'],
             hoverTexture: tileset['yellow_button_hover.png'],
             clickTexture: tileset['yellow_button_active.png'],
@@ -75,6 +90,7 @@ export default class SettingScene extends Scene {
                     gameMusic.muted = true;
                     this.musicButton.icon.texture = tileset['musicOff.png'];
                 }
+                storage.setItem('hasMusic', !gameMusic.muted);
             }
         });
         this.musicButton.position.set(400, 90);
@@ -84,7 +100,7 @@ export default class SettingScene extends Scene {
         this.tileNumberButton = new Button({
             width: 50,
             height: 50,
-            icon: tileset['checkmark.png'],
+            icon: this.hasTileNumber ? tileset['checkmark.png'] : tileset['cross.png'],
             idleTexture: tileset['yellow_button_idle.png'],
             hoverTexture: tileset['yellow_button_hover.png'],
             clickTexture: tileset['yellow_button_active.png'],
@@ -99,6 +115,7 @@ export default class SettingScene extends Scene {
                     boardManager.setTilesNumberVisiblity(true);
                     this.tileNumberButton.icon.texture = tileset['checkmark.png'];
                 }
+                storage.setItem('hasTileNumber', this.hasTileNumber);
             }
         });
         this.tileNumberButton.position.set(400, 150);
