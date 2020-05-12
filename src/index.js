@@ -31,7 +31,7 @@ const textStyle = new TextStyle({
     }),
     btnTextStyle = new TextStyle({
         fontFamily: 'Arial',
-        fontSize: 15,
+        fontSize: 17,
         fontStyle: 'normal',
         fontWeight: 'bold',
         fill: 0x3d3d3d
@@ -64,31 +64,41 @@ let puzzleSelectButton,
     shuffleButton,
     settingButton;
 
-document.body.appendChild(app.view);
-scaleToWindow(app.view);
 
-spalshScreen = new SplashScreen({
-    text: 'loading assets, please wait ...',
-    width: 768,
-    height: 1024
-});
-app.stage.addChild(spalshScreen);
 
-app.loader
-    .add('click', './assets/sounds/click.ogg')
-    .add('music', './assets/sounds/music.mp3')
-    .add('tileset', './assets/sprites/tileset.json')
-    .add('puzzle-01', './assets/images/puzzle-01.jpg')
-    .add('puzzle-02', './assets/images/puzzle-02.jpg')
-    .add('puzzle-03', './assets/images/puzzle-03.jpg')
-    .add('puzzle-04', './assets/images/puzzle-04.jpg')
-    .add('puzzle-05', './assets/images/puzzle-05.jpg')
-    .add('puzzle-06', './assets/images/puzzle-06.jpg')
-    .add('puzzle-07', './assets/images/puzzle-07.jpg')
-    .add('puzzle-08', './assets/images/puzzle-08.jpg')
-    .add('puzzle-09', './assets/images/puzzle-09.jpg')
-    .add('puzzle-10', './assets/images/puzzle-10.jpg')
-    .load(setup);
+function init() {
+    document.body.appendChild(app.view);
+    scaleToWindow(app.view);
+
+    // create splash screen
+    spalshScreen = new SplashScreen({
+        width: 768,
+        height: 1024
+    });
+    app.stage.addChild(spalshScreen);
+
+    // load game assets
+    app.loader
+        .add('click', './assets/sounds/click.ogg')
+        .add('music', './assets/sounds/music.mp3')
+        .add('tileset', './assets/sprites/tileset.json')
+        .add('puzzle-01', './assets/images/puzzle-01.jpg')
+        .add('puzzle-02', './assets/images/puzzle-02.jpg')
+        .add('puzzle-03', './assets/images/puzzle-03.jpg')
+        .add('puzzle-04', './assets/images/puzzle-04.jpg')
+        .add('puzzle-05', './assets/images/puzzle-05.jpg')
+        .add('puzzle-06', './assets/images/puzzle-06.jpg')
+        .add('puzzle-07', './assets/images/puzzle-07.jpg')
+        .add('puzzle-08', './assets/images/puzzle-08.jpg')
+        .add('puzzle-09', './assets/images/puzzle-09.jpg')
+        .add('puzzle-10', './assets/images/puzzle-10.jpg')
+        .load(setup);
+
+    // update loading progress
+    app.loader.on('progress', loader => {
+        spalshScreen.progress.text = `loading ${loader.progress.toFixed(0)}% ...`;
+    });
+}
 
 function setup(loader, resources) {
 
@@ -112,7 +122,7 @@ function setup(loader, resources) {
     body.h = 1024;
     menu.w = 768;
     menu.h = 100;
-    
+
     // add body bg
     let ctx = new Graphics();
     ctx.beginFill(0xf99d07, 0.85);
@@ -127,7 +137,7 @@ function setup(loader, resources) {
     ctx.endFill();
     menu.addChild(ctx);
 
-    let titleStyle = new TextStyle({
+    let titleText = new Text('8Puzzle', new TextStyle({
         fontFamily: 'Courier',
         fontSize: 60,
         fontStyle: 'normal',
@@ -135,8 +145,12 @@ function setup(loader, resources) {
         fill: ['#ffffff', '#f9e104'],
         stroke: '#4a1850',
         strokeThickness: 5,
-    });
-    let titleText = new Text('8Puzzle', titleStyle);
+        dropShadow: true,
+        dropShadowColor: '#000000',
+        dropShadowBlur: 4,
+        dropShadowAngle: Math.PI / 6,
+        dropShadowDistance: 2
+    }));
     title.addChild(titleText);
     title.position.set(20, 20);
 
@@ -240,7 +254,7 @@ function setup(loader, resources) {
     tools.position.set(menu.w - tools.width - 20, 20);
     body.addChild(menu, bm.board);
 
-    app.stage.addChild(body, puzzleSelectScene, settingScene, loadingScene);    
+    app.stage.addChild(body, puzzleSelectScene, settingScene, loadingScene);
 
     music.volume = 0.1;
     music.loop = true;
@@ -266,6 +280,10 @@ function update(delta) {
     loadingScene.update(delta);
 }
 
+/**
+ * callback function for select puzzle button.
+ * @param {Object} e 
+ */
 function onPuzzleSelectClicked(e) {
     if (bm.hasMoves()) return;
     puzzleSelectScene.show();
@@ -312,13 +330,17 @@ function onTileClicked(e) {
 }
 
 /**
- * this function will be called when puzzle
- * solved by board manager. 
+ * this function will be called when the puzzle
+ * is solved by board manager. 
  */
 function onPuzzleSolved() {
     loadingScene.hide();
 }
 
+/**
+ * this function will be called when the puzzle
+ * is complete.
+ */
 function onPuzzleComplete() {
     bm.showBackground();
 }
@@ -431,6 +453,8 @@ function registerServiceWorker() {
         console.log('no service worker!!!');
     }
 }
+
+init();
 
 export {
     app,
