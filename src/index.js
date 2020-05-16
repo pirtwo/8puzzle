@@ -430,7 +430,6 @@ window.addEventListener('resize', (e) => {
  * catch PWA install prompt
  */
 window.addEventListener('beforeinstallprompt', e => {
-    console.log('catch install prompt');
     e.preventDefault();
     installPrompt = e;
 });
@@ -439,15 +438,18 @@ window.addEventListener('beforeinstallprompt', e => {
  * registers a service worker for PWA application.
  */
 function registerServiceWorker() {
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./service-worker.js').then(registration => {
-            console.log('SW registered');
-        }).catch(registrationError => {
-            console.log('SW registration failed: ', registrationError);
-        });
-    } else {
-        console.log('no service worker!!!');
-    }
+    window.onload(e => {
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./service-worker.js')
+                .then(registration => {
+                    console.log('SW registered');
+                }).catch(registrationError => {
+                    console.log('SW registration failed: ', registrationError);
+                });
+        } else {
+            console.log('no service worker!!!');
+        }
+    });
 }
 
 init();
