@@ -102,7 +102,7 @@ function init() {
 
 function setup(loader, resources) {
     app.stop();
-    
+
     tileset = resources['tileset'].textures;
     music = resources.music.sound;
     clickSound = resources.click.sound;
@@ -439,18 +439,16 @@ window.addEventListener('beforeinstallprompt', e => {
  * registers a service worker for PWA application.
  */
 function registerServiceWorker() {
-    window.addEventListener('load', e => {
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('./service-worker.js')
-                .then(registration => {
-                    console.log('SW registered');
-                }).catch(registrationError => {
-                    console.log('SW registration failed: ', registrationError);
-                });
-        } else {
-            console.log('no service worker!!!');
-        }
-    });
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./service-worker.js')
+            .then(registration => {
+                console.log('SW registered');
+            }).catch(registrationError => {
+                console.log('SW registration failed: ', registrationError);
+            });
+    } else {
+        console.log('no service worker!!!');
+    }
 }
 
 init();
