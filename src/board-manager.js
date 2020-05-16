@@ -196,7 +196,7 @@ export default class BoardManager {
                 tile.number = tileNum;
                 tile.isEmpty = tileNum == this.emptyTileNumber;
                 tile.interactive = true;
-                tile.on("pointerdown", this.tileClickCallback);
+                tile.on("pointertap", this.tileClickCallback);
 
                 if (tile.isEmpty) {
                     ctx = new Graphics();

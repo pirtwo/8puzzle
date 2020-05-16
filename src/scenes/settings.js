@@ -17,7 +17,7 @@ export default class SettingScene extends Scene {
         width,
         height,
         boardManager
-    }) {   
+    }) {
         super();
         let text,
             storage = localStorage,
@@ -31,6 +31,14 @@ export default class SettingScene extends Scene {
             backdropWidth: app.view.width,
             backdropHeight: app.view.height
         });
+
+        // -- init settings --
+        if (storage.getItem('hasMusic') === null)
+            storage.setItem('hasMusic', true);
+        if (storage.getItem('hasUISound') === null)
+            storage.setItem('hasUISound', true);
+        if (storage.getItem('hasTileNumber') === null)
+            storage.setItem('hasTileNumber', true);
 
         // -- load settings --
         uiSound.muted = !storage.getItem('hasUISound') ||

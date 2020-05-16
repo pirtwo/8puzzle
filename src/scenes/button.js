@@ -50,7 +50,7 @@ export default class Button extends Scene {
 
         this.interactive = true;
         this.buttonMode = true;
-        this.on('click', this.clickCallback);
+        this.on('pointertap', this.clickCallback);        
         this.on('pointerdown', (e) => {
             this.clickSound.play();
             this.sprite.texture = this.clickTexture;
