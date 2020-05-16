@@ -19,12 +19,7 @@ export default function astar({
 
         closeList.push(currNode);
 
-        if (goalTestFn(currNode)) {
-            console.log(`
-            ------- A* stats -------
-            depth: ${currNode.getDepth()}
-            opens: ${openList.length}
-            close: ${closeList.length}`);
+        if (goalTestFn(currNode)) {            
             return currNode;
         }
 
