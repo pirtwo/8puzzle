@@ -36,18 +36,15 @@ export default class SettingScene extends Scene {
         });
 
         // -- load settings --
-        uiSound.muted = 
-            !storage.getItem('hasUISound') ||
-            storage.getItem('hasUISound') == 'false' 
-            ? true : false;
-        gameMusic.muted = 
-            !storage.getItem('hasMusic') ||
-            storage.getItem('hasMusic') == 'false' 
-            ? true : false;
-        this.hasTileNumber = 
-            !storage.getItem('hasTileNumber') ||
-            storage.getItem('hasTileNumber') == 'true' 
-            ? true : false;
+        uiSound.muted = !storage.getItem('hasUISound') ||
+            storage.getItem('hasUISound') == 'false' ?
+            true : false;
+        gameMusic.muted = !storage.getItem('hasMusic') ||
+            storage.getItem('hasMusic') == 'false' ?
+            true : false;
+        this.hasTileNumber = !storage.getItem('hasTileNumber') ||
+            storage.getItem('hasTileNumber') == 'true' ?
+            true : false;
         boardManager.setTilesNumberVisiblity(this.hasTileNumber);
 
         // sound settings
@@ -131,7 +128,14 @@ export default class SettingScene extends Scene {
             clickTexture: tileset['yellow_button_active.png'],
             clickSound: app.loader.resources.click.sound,
             clickCallback: () => {
-
+                let body = document.querySelector('body');
+                let tmpElm = document.createElement('textarea');
+                tmpElm.value = 'my game link';
+                body.appendChild(tmpElm);
+                tmpElm.select();
+                tmpElm.setSelectionRange(0, 99999);
+                document.execCommand('copy');
+                tmpElm.remove();
             }
         });
         this.shareButton.position.set(400, 210);
@@ -149,7 +153,6 @@ export default class SettingScene extends Scene {
             clickCallback: () => {
                 if (installPrompt) {
                     installPrompt.prompt();
-                    console.log(installPrompt);
                     installPrompt.userChoice.then(choice => {
                         if (choice.outcome === 'accepted') {
                             this.installText.visible = false;
@@ -209,9 +212,5 @@ export default class SettingScene extends Scene {
 
         this.panel.putCenter();
         this.addChild(this.panel);
-    }
-
-    update(delta) {
-
     }
 }
