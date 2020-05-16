@@ -5,6 +5,7 @@ self.addEventListener('install', function (e) {
                 '/',
                 '/index.html',
                 '/css/app.css',
+                '/favicon.ico',
                 '/assets/sprites/tileset.png',
                 '/assets/sprites/tileset.json',
                 '/assets/sounds/click.ogg',
