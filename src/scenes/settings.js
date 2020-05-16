@@ -17,10 +17,7 @@ export default class SettingScene extends Scene {
         width,
         height,
         boardManager
-    }) {
-
-        // TODO: add share button.
-
+    }) {   
         super();
         let text,
             storage = localStorage,
