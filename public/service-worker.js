@@ -4,6 +4,7 @@ self.addEventListener('install', function (e) {
             return cache.addAll([
                 '/',
                 '/index.html',
+                '/js/bundle.js',
                 '/css/app.css',
                 '/favicon.ico',
                 '/assets/sprites/tileset.png',
