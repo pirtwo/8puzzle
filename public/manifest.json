@@ -1,7 +1,7 @@
 {
     "short_name": "8-PUZZLE",
-    "name": "8-PUZZLE",
-    "description": "The 8-Puzzle game",
+    "name": "8-PUZZLE GAME",
+    "description": "Awsome 8-Puzzle game.",
     "icons": [{
             "src": "/icon/8puzzle-192.png",
             "type": "image/png",
@@ -14,8 +14,8 @@
         }
     ],
     "start_url": "/index.html",
-    "scope": "/",
-    "background_color": "#3367D6",
-    "display": "standalone",
-    "theme_color": "#3367D6"
+    "scope": "/",    
+    "display": "fullscreen",
+    "theme_color": "#3367D6",
+    "background_color": "#3367D6"
 }
