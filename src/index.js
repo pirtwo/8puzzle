@@ -101,6 +101,10 @@ function init() {
 }
 
 function setup(loader, resources) {
+
+    // TODO: add fullscreen button to settings.
+    // TODO: add exit button to menu.
+    
     app.stop();
 
     tileset = resources['tileset'].textures;
