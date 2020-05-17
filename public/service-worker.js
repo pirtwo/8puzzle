@@ -4,9 +4,13 @@ self.addEventListener('install', function (e) {
             return cache.addAll([
                 '/',
                 '/index.html',
+                '/manifest.json',
                 '/js/bundle.js',
+                '/js/puzzle-worker.js',
                 '/css/app.css',
                 '/favicon.ico',
+                '/icons/8puzzle-192.png',
+                '/icons/8puzzle-512.png',
                 '/assets/sprites/tileset.png',
                 '/assets/sprites/tileset.json',
                 '/assets/sounds/click.ogg',
@@ -26,7 +30,7 @@ self.addEventListener('install', function (e) {
     );
 });
 
-self.addEventListener('fetch', function (e) {    
+self.addEventListener('fetch', function (e) {
     e.respondWith(
         caches.match(e.request).then(function (response) {
             return response || fetch(e.request);
