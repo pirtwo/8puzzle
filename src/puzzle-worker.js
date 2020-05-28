@@ -16,8 +16,8 @@ onmessage = (msg) => {
 
         let answer = astar({
             node: node,
-            goalTestFn: goalFn,
-            calcCostFn: costFn
+            goalTest: goalFn,
+            calcCost: costFn
         });
 
         let actions = [];

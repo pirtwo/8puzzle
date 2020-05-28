@@ -1,12 +1,12 @@
 export default function astar({
     node,
-    goalTestFn = (currNode) => {},
-    calcCostFn = (currNode) => {}
+    goalTest,
+    calcCost
 }) {
     let openList = [],
         closeList = [];
 
-    node.cost = calcCostFn(node);
+    node.cost = calcCost(node);
     openList.push(node);
 
     while (openList.length > 0) {
@@ -19,14 +19,14 @@ export default function astar({
 
         closeList.push(currNode);
 
-        if (goalTestFn(currNode)) {            
+        if (goalTest(currNode)) {            
             return currNode;
         }
 
         let successors = currNode.getSuccessors();
         for (let i = 0; i < successors.length; i++) {
             let child = successors[i];
-            child.cost = calcCostFn(child);
+            child.cost = calcCost(child);
             openList.push(child);
         }
     }
